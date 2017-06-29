@@ -1,0 +1,115 @@
+{{ extends "layout-authenticated.html" }} 
+
+{{ block BodyAuth() }}
+    <div class="range range-xs-center offset-top-0">
+        <div class="cell-md-6 cell-sm-12 text-left">
+          <!-- Responsive-tabs-->
+          <div id="tab" data-type="horizontal" class="responsive-tabs responsive-tabs-classic">
+            <ul data-group="tabs-group-default" class="resp-tabs-list tabs-1 text-center tabs-group-default">
+              <li>Make Payments</li>
+              <li>Receive Payments</li>				
+            </ul>
+            <div data-group="tabs-group-default" class="resp-tabs-container text-left tabs-group-default">
+				      <div class="row">
+            {{if .Data.User.CreditCardID == "" }}
+            <p>Add your credit card below to make payments to service providers with only a single click.</p>
+            <form id="cc-save-form" data-form-output="form-output-global" method="post" action="/save-cc" class="cc-save-form text-left">
+                <div class="range">
+                    <div role="alert" class="alert alert-danger">
+					            <p class="offset-top-0">Error! Check the form and try submitting again.</p>
+					          </div>
+                    <div class="cell-md-12 offset-top-30 offset-md-top-20">
+                      <div class="form-group">
+                        <label for="ccname" class="form-label rd-input-label">Name on Card</label>
+                        <input id="ccname" type="text" name="ccname" value="" class="form-control" data-constraints='@Required(label="Name")'>
+                      </div>
+                    </div>
+                    <div class="cell-md-8 offset-top-30 offset-md-top-20">
+                      <div class="form-group">
+                        <label for="ccnumber" class="form-label rd-input-label">Card Number</label>
+                        <input id="ccnumber" type="tel" name="ccnumber" value="" class="form-control cc-number" autocomplete="cc-number" data-constraints='@Required(label="Card number") @ValidCreditCardNumber'>
+                      </div>
+                    </div>
+                    <div class="cell-md-4 offset-top-30 offset-md-top-20">
+                        <img id="visa" class="cclogo visa disabled" src="/images/visa.png" height="30px"/> <img id="mastercard" class="cclogo mastercard disabled" src="/images/mastercard.png" height="30px"/> 
+                    </div>
+                    <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                      <div class="form-group">
+                        <label for="ccexpiry" class="form-label rd-input-label">Expiry Date</label>
+                        <input id="ccexpiry" type="text" name="ccexpiry" value="" class="form-control" data-constraints='@Required(label="Expiry date") @ValidExpiryDate'>
+                      </div>
+                    </div>
+                    <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                      <div class="form-group">
+                        <label for="cccvv" class="form-label rd-input-label">CVV</label>
+                        <input id="cccvv" type="text" name="cccvv" value="" class="form-control" data-constraints='@Required(label="CVV") @ValidCVV'>
+                      </div>
+                    </div>
+                </div>
+                <div class="group group-xl offset-top-30 text-center text-md-left">
+                      <input id="userid" type="hidden" name="userid" value="{{ .Data.User.UserID }}" />
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+            </form>
+            {{ else }}
+            <p>You currently have saved the credit card:<br>{{ .Data.User.CreditCardMask }}</p>
+            <input id="userid" type="hidden" name="userid" value="{{ .Data.User.UserID }}" />
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#ccDeleteModal">Delete</button>
+            {{ end }}
+				  </div>
+          <div class="row">
+            <p>If you do not set any payment details, by default we will send a PayPal payment to your registered email address. To choose a different email or mobile, please enter your details below.</p>
+            <p><!-- PayPal Logo --><table border="0" cellpadding="10" cellspacing="0"><tr><td></td></tr><tr><td><a href="https://www.paypal.com/au/webapps/mpp/paypal-popup" title="How PayPal Works" onclick="javascript:window.open('https://www.paypal.com/au/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png" alt="Buy now with PayPal" /></a></td></tr></table><!-- PayPal Logo --></p>
+            <form id="payout-details-form">
+              <div class="form-group">
+                <label for="PaypalEmail">Paypal email</label>
+                {{ payoutType := .Data.User.PayoutType }}
+                {{ payoutAccount := .Data.User.PayoutType }}
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input id="paypalEmailRadio" type="radio" name="PaypalPaymentType" value="PPEMAIL" aria-label="PaypalEmail" {{ if payoutType == "PPEMAIL" || payoutType == "" }}checked{{end}}>
+                  </span>
+                  <input id="paypalEmailAccount" type="text" class="form-control" aria-label="Email" placeholder="{{.Data.User.Email}}" value='{{ if payoutType == "PPEMAIL" }}{{.Data.User.PayoutAccount}}{{end}}' data-constraints='@Email(ignoreEmpty=true,label="Paypal email")'>
+                </div><!-- /input-group -->
+              </div>
+              <div class="form-group">
+                <label for="PaypalMobile">Paypal mobile</label>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input id="paypalMobileRadio" type="radio" name="PaypalPaymentType" value="PPMOBILE" aria-label="PayPalMobile" {{ if payoutType == "PPMOBILE" }}checked{{end}}>
+                  </span>
+                  <input id="paypalMobileAccount" type="text" class="form-control" aria-label="Mobile" value='{{ if payoutType == "PPMOBILE" }}{{.Data.User.PayoutAccount}}{{end}}' data-constraints='@RequiredIfRadioSelected(label="Paypal mobile",radioButtonId="paypalMobileRadio")'>
+                </div><!-- /input-group -->
+              </div>
+              <div class="group group-xl offset-top-30 text-center text-md-left">
+                      <input id="userid" type="hidden" name="userid" value="{{ .Data.User.UserID }}" />
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+            </form>
+          </div>
+        </div>
+    </div>
+        </div></div>
+
+{{ end }}
+
+{{ block BodyFooterIncludes() }}
+<div id="ccDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Are you sure?</h4>
+      </div>
+      <div class="modal-body">
+        <p>This action is not reversable. Once you delete this credit card you will have to re-add it. Delete credit card?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">No, don't delete</button>
+        <button type="button" id="cc-delete" class="btn btn-danger">Delete</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{{ end }}

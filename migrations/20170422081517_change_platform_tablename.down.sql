@@ -1,0 +1,1 @@
+ALTER TABLE platforms RENAME TO platform

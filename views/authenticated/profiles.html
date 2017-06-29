@@ -1,0 +1,37 @@
+{{ extends "layout-authenticated.html" }} 
+{{block BodyAuth()}}
+<div class="range range-sm-left range-xs-center">
+	
+  	{{range index, profile := .Data.Profiles}}
+		{{feedbackAverage := .Data.FeedbackAverages[index]}}
+		{{ include "../partials/_profile_card.html" }}
+  	{{end}}
+	<div class="post-wrapper cell-sm-12 cell-md-4">
+		<article class="post post-modern" style="cursor: pointer;opacity:.5;" data-link="/add-profile">
+			<!-- Post media-->
+			<header class="post-media">
+				<div class="text-left" style=" background-image: url(/images/default-avatar.png); background-size: cover;height: 270px;">
+				</div>
+				<div class="post-tags group-xs">
+				<span class="label-custom label-lg-custom label-rounded-custom label-primary" style="width: 99%;">New Profile</span>
+				</div>
+			</header>
+			<!-- Post content-->
+			<section class="post-content text-center" style="padding-top:10px; min-height: 150px;">
+				<i class="fa fa-plus fa-4x" style="line-height:3;"></i>
+			</section>
+		</article>
+	</div>
+	  
+</div>
+
+{{end}}
+
+{{ block BodyFooterIncludes() }}
+<script>
+	$(document).on('ready', function(){
+    	$('.starscore').rating({displayOnly: true, step: 0.05});
+	});
+
+</script>
+{{ end }}

@@ -1,0 +1,174 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block">Feedback to Customer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }} 
+{{ block BodyFooterIncludes() }}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(".btn-group span").hide();
+    $("#reputation-region .glyphicon").hide();
+    var SDAstring = [];
+    var commentString = "NotRated";
+    var disableflag = "{{.Data.DisableFlag}}";
+    console.log("Flag: ", disableflag);        
+    $(".btn-group").click(function(){        
+      var countOfselectedButton = $(".btn-group span:visible").length;     
+      if ($(this).find("span").is(":visible") == false & countOfselectedButton<3){
+          $(this).find("span").show();
+          $(this).addClass("btn-primary");
+          SDAstring.push($(this).text());
+      } else {
+         $(this).find("span").hide();
+         $(this).removeClass("btn-primary");
+         var index = SDAstring.indexOf($(this).text());      
+         if (index==-1) {
+           return;
+         }
+         SDAstring.splice(index,1);
+      }
+    });
+
+    $("#reputation-region .form").click(function () {
+      $("#reputation-region .glyphicon").hide();
+      if ($(this).find(".glyphicon").is(":visible")== false) {
+        $(this).find(".glyphicon").show();
+        commentString = $(this).find("span").text();
+      } else {
+        $(this).find(".glyphicon").hide();
+        commentString = "";
+      }
+      $("#feedback-comment").val(commentString);
+    });
+    $("#submit").click(function () {
+      console.log($("#feedback-description").val(),SDAstring.join(","),commentString,"{{.Data.Booking.BookingID}}","{{.Data.FeedbackProfileID}}");
+      $.post('/send-feedback', {
+      descriptionText: $("#feedback-description").val(),
+      SDAtext: SDAstring.join(","),
+      score: 0, //notify customer...
+      commentText: $("#feedback-comment").val(),
+      bookingID: parseInt("{{.Data.Booking.BookingID}}"),
+      feedbackProfileID: parseInt("{{.Data.FeedbackProfileID}}"),
+      feedbackToCustomer: commentString
+      })
+     .done(function (d, status, xhr) {
+       var data = xhr.responseJSON;
+        console.log(status + ":" + data.message);
+        window.location = data.data;
+     })
+     .fail(function (xhr, status, error){
+
+     });
+    });
+    $('.starscore').rating({displayOnly: true, 				  
+      showCaption: true,
+    }); 
+    if (disableflag == "true") {
+      $('.container-fluid').find('*').prop('disabled',true);
+      
+    }     
+  });
+
+</script>
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">  
+
+  <section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+    <div class="container-fluid">
+      {{if .Data.DisableFlag}}
+      <h3>You have already given your feedback</h3>
+      {{end}}
+      <div class="row">
+        <div class="col-sm-3">
+        
+        {{ index := 0 }}
+        {{ if .Data.UserID == .Data.Booking.User.UserID}}
+           {{profile := .Data.Booking.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ else }}
+           {{profile := .Data.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ end }}               
+        </div>
+      
+        <div class="col-sm-4">
+          <div class="offset-top-20">
+            <label for="comment"  style="text-align: left">Description</label>
+            {{ if len(.Data.LastBookingHistory.Address) == 0}}
+              {{ description := "Our transaction on " + .Data.LastBookingHistory.CreatedTimeFormat()  + "\n" + "Thanks. " + .Data.Profile.User.FirstName + ":)" }}
+              <textarea id="feedback-description" class="form-control" rows="3">{{description}}</textarea>
+            {{ else }}
+              {{ description := "\"" + .Data.LastBookingHistory.Message + "\"" + "\n"  + "Completed on" + .Data.LastBookingHistory.CreatedTimeFormat() + "\n" + "Thanks. " + .Data.Profile.User.FirstName + ":)" }}
+              <textarea id="feedback-description" class="form-control" rows="3">{{description}}</textarea>
+            {{ end }}
+            
+          </div>
+          <div id="reputation-region" class="col-md-12 offset-top-41">
+            <div><label><h3>Your Score</h3></label></div>
+            <div class="form offset-top-41" style="font-size: 40px">
+              <i class="fa fa-plus-circle" aria-hidden="true" style="font-size: 70px; color: green; margin-right: 10px;"></i>
+              <span style="margin-right: 5px;"><b>Positive</b></span>
+              <span class="glyphicon glyphicon-ok" style="color:lightgreen"></span>
+            </div>
+            <div class="form offset-top-41" style="font-size: 40px">
+              <i class="fa fa-dot-circle-o" aria-hidden="true" style="font-size: 70px; color:grey; margin-right: 10px;"></i>
+              <span style="margin-right: 5px;"><b>Neutral</b></span>
+              <span class="glyphicon glyphicon-ok" style="color:lightgreen"></span>
+            </div>
+            <div class="form offset-top-41" style="font-size: 40px">
+              <i class="fa fa-minus-circle" aria-hidden="true" style="font-size: 70px; color:firebrick; "></i>
+              <span ><b>Negative</b></span>
+              <span class="glyphicon glyphicon-ok" style="color:lightgreen"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-5 offset-top-20">  
+          <label for="special-degree-awesome" style="font-size: 30px">Special Degree of Awesomeness</label>
+            {{sdaList := .Data.SdaCustomer.GetSdaList()}}       
+            {{ range element := sdaList[0:5]}}
+              <div class="col-sm-6 offset-top-20">
+                <button type="button" style="width: 110%" class="btn btn-group" value="{{element}}">{{element}}<span class="glyphicon glyphicon-ok"></span></button>            
+              </div>
+            {{ end }}
+            {{ range element := sdaList[5:]}}
+              <div class="col-sm-6 offset-top-20">
+                <button type="button" style="width: 110%" class="btn btn-group" value="{{element}}">{{element}}<span class="glyphicon glyphicon-ok"></span></button>            
+              </div>
+            {{ end }}
+            
+            <div class="offset-top-50">
+              <label for="comments" style="font-size: 30px">Comments</label>
+              <textarea id="feedback-comment" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+      </div>
+      
+      <div class="offset-top-20">
+        <button id="submit" type="button" class="btn btn-primary pull-right" style="width: 30%">Submit</button>
+      </div>     
+    </div>
+   
+  </section>
+  
+</main>
+
+{{ end }}
+
+

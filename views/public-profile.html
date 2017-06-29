@@ -1,0 +1,130 @@
+{{ extends "layout-home.html" }}
+
+{{ block SMMetaTagIncludes() }}
+	<!-- Facebook -->
+    <meta property="og:title" content='{{ isset(.Data.Profile.User.FirstName) ? .Data.Profile.User.FirstName : .Data.Profile.User.Email }} {{ isset(.Data.Profile.User.LastName) ? .Data.Profile.User.LastName : "" }} - {{.Data.Profile.Title}} | UR Local'/>
+    <meta property="og:site_name" content="UR Local"/>
+    <meta property="og:description" content="{{ .Data.Profile.ShortDescription() }}"/>
+    <meta property="og:image" content="{{ .Data.Profile.DisplayPhoto() }}"/>
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@urlocal" />
+    <meta name="twitter:title" content='{{ isset(.Data.Profile.User.FirstName) ? .Data.Profile.User.FirstName : .Data.Profile.User.Email }} {{ isset(.Data.Profile.User.LastName) ? .Data.Profile.User.LastName : "" }} - {{.Data.Profile.Title}} | UR Local' />
+    <meta name="twitter:description" content="{{ .Data.Profile.ShortDescription() }}" />
+    <meta name="twitter:image" content="{{ .Data.Profile.DisplayPhoto() }}" />
+{{ end }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+	<!-- Modern Breadcrumbs-->
+	<section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+		<div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+		<div data-speed="0" data-type="html" class="rd-parallax-layer">
+			<div class="bg-overlay-gray-darkest">
+				<div class="shell section-top-98 section-lg-top-155">
+					
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+{{ end }} 
+
+{{ block BodyFooterIncludes() }}
+	<script>
+		// defaults for share configs in script.js
+		var shares = window.desktopShares;
+		if(jQuery.browser.mobile) {
+			shares = window.mobileShares;
+		}
+        $("#share").jsSocials({
+			text: '{{ isset(.Data.Profile.User.FirstName) ? .Data.Profile.User.FirstName : .Data.Profile.User.Email }} {{ isset(.Data.Profile.User.LastName) ? .Data.Profile.User.LastName : "" }} - {{.Data.Profile.Title}}',
+			showCount: false,
+			shareIn: "popup",
+            shares: shares
+        });
+		$(document).ready(function(){
+       		$('.starscore').rating({displayOnly: true, 				  
+				showCaption: true,
+			}); 
+    	});
+  		
+    </script>
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content auth-content {{.PageName()}}">
+    <section class="section-top-34 section-sm-34 section-bottom-66">
+		<div class="container">
+			<div class="row offset-top-50 offset-sm-top-66">
+				<div class="col-sm-4">
+					{{profile := .Data.Profile}}					
+					{{feedbackAverage := profile.UniversalReputationScore()}}
+					{{ index := 0 }}
+					<!-- end -->
+
+					{{ include "/partials/_profile_card.html"}}
+				</div>
+				<div class="col-md-8">
+					<div class="shell">
+						<div id="share"></div>
+						<h3>{{.Data.Profile.Title}}</h3>
+						<p>{{.Data.Profile.Description}}</p>
+						<p>{{.Data.Profile.Fee}} ({{.Data.Profile.PaymentNotes}})</p>
+					</div>
+					
+					<div class="col-sm-12 offset-top-50">
+						{{if .Data.Profile.ProfileType == "s"}}
+						<a href="/booking/{{.Data.Profile.ProfileUUID}}" class="btn btn-sm btn-primary btn-icon btn-icon-left"><span class="icon fa fa-shopping-cart"></span>Buy</a>
+						{{else}}
+						<a href="/booking/{{.Data.Profile.ProfileUUID}}" class="btn btn-sm btn-primary btn-icon btn-icon-left"><span class="icon fa fa-calendar"></span>Request booking</a>
+						{{end}}
+						<a href="/verify-rooms?profileid={{.Data.Profile.ProfileID}}&profileid={{.Data.ProfileID}}" class="btn btn-sm btn-info btn-icon btn-icon-left"><span class="icon fa fa-comments"></span>Send message</a>
+						<a class="btn btn-sm btn-success btn-icon btn-icon-left"><span class="icon fa fa-star"></span>Add to favourites</a>
+						<a class="btn btn-sm btn-success btn-icon btn-icon-left" data-toggle="modal" data-target="#quick-payment-modal"><span class="icon fa fa-paypal"></span>Pay this Profile</a>
+						<input type="hidden" value="{{.Data.Profile.ProfileID}}" id="quick-payment-profile-id"/>
+						<input type="hidden" value="{{.Data.UserID}}" id="quick-payment-user-id"/>
+					</div>					
+				</div>
+			</div>
+		</div>
+		<div class="modal modal-custom fade " id="quick-payment-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header text-center">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+				<h2>Quick Payment</h2>
+				</div>
+				<div class="modal-body">
+				<form id="quick-payment-form" data-form-output="form-output-global" method="post" action="" class="quick-payment-form text-left">
+					<div class="form-group" class="form-label rd-input-label">              
+						<label for="quick-payment-message" class="form-label">Message</label>
+						<textarea id="quick-payment-message" class="form-control"  rows="3"  required=""></textarea> 
+					</div> 
+
+					<div class="form-group offset-top-20">        
+              			<label for="quick-payment-amount" class="form-label rd-input-label">Amount</label>
+						<input id="quick-payment-amount" type="text"  class="form-control" data-constraints='@Required(label="Fee")'/>
+					</div>
+
+					<div class="offset-top-30">
+						<div class="row">
+							<div class="pull-left">
+								<button type="button" id="quick-payment-paypal" class="btn btn-primary btn-block">Pay With Paypal</button>
+							</div>
+							<div class="pull-right">
+								<button type="button" id="quick-payment-credit-card" class="btn btn-primary btn-block">Pay With Credit Card</button>
+							</div>													
+							
+						</div>
+					</div>
+				</form>
+				</div>
+			</div>
+			</div>
+    	</div>
+    </section>
+</main>
+{{ end }}

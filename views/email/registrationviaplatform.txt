@@ -1,0 +1,16 @@
+Hi there! 
+
+We think UR awesome. Do you too?
+
+You registered with {{Platform.Name}}, congratulations. {{Platform.Name}} works with Universal Reputations (UR) to help their users develop the best possible reputations so they can be more successful on their platform.
+
+There is nothing you need to do: you are all set to go and do great things on {{Platform.Name}}. 
+
+This email is just to let you know that there is MUCH more you can do with your UR account. We are all about helping you manage and make the most of your on-line reputation - you know, the thing that sets you apart from others and makes you successful in your on-line activities, whether you are selling your services, buying stuff or whatever. 
+
+So if you are curious about what else you can do to manage your reputation and make it work for you, please go to UR and find out for yourself!
+
+The team: we are UR.
+
+Go to UR to complete your account sign-up by copying and pasting the link below:
+{{DashboardURL}}

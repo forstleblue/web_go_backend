@@ -1,0 +1,53 @@
+<div class="ur-reputation-widget-wrapper">
+    <div class="ur-reputation-widget-heading-wrapper">
+        <h1 class="ur-reputation-widget-heading">Reputation Score</h1>
+    </div>
+    <div class="ur-reputation-widget-body-wrapper">
+        <div class="ur-reputation-img">
+            <img src="{{.Data.Profile.DisplayPhotoFullURL()}}" />
+        </div>
+        <div class="ur-reputation-detail">
+            <h2 class="ur-reputation-heading">{{.Data.Profile.User.FullName()}}</h2>
+            <div class="ur-reputation-rating-wrapper">
+                {{ average := .Data.Profile.FeedbackAverage()}}
+                {{ if .Data.Profile.FeedbackCount() == 0 }}
+                {{ average = 0 }}
+                {{ end }}
+                <div class="star-rating">
+                    <div class="empty-stars">
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                    </div>
+                    <div class="filled-stars" style="width:{{average}}%;">
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                    </div>
+                </div>
+                <span class="ur-reputation-rating-count">({{.Data.Profile.FeedbackCount()}})</span>
+            </div>
+            <div class="ur-reputation-testimonial-wrapper">
+                {{ if .Data.Profile.FeedbackCount() == 0 }}
+                    No ratings available
+                {{ else }}
+                    {{.Data.Profile.FeedbackDescription()}}
+                {{ end }}
+            </div>
+            <div class="ur-reputation-sda-wrapper">
+                {{ if .Data.Profile.FeedbackCount() == 0 }}
+                    No ratings available
+                {{ else }}
+                    {{.Data.Profile.FeedbackTopSDA()}}
+                {{ end }}
+            </div>
+        </div>
+    </div>
+    <div class="ur-reputation-widget-footer-wrapper">
+        Powered by Universal Reputations <img src="{{.Data.FullURL}}/images/logo.png" />
+    </div>
+</div>

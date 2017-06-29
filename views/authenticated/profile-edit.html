@@ -1,0 +1,297 @@
+{{ extends "layout-authenticated.html" }} 
+
+{{ block BodyHeaderIncludes() }}
+
+{{ end }}
+
+{{ block BodyAuth() }}
+<div class="range range-xs-center offset-top-0">
+    <div class="cell-sm-12">
+        <form id="profile-form" data-form-output="form-output-global" method="post" class="profile-form text-left">
+            <div class="range">
+                <div class="cell-lg-12 offset-top-30 offset-md-top-0">                
+                    <div role="alert" class="alert alert-danger">
+                        <p class="offset-top-0">Error! Check the form and try submitting again.</p>
+                    </div>
+                </div>
+                <div class="cell-lg-12 offset-top-30 offset-md-top-0 text-center">
+                    {{if .Data.Profile.PhotoURL == "" }}
+                        <div id="uploader"></div>
+                    {{else}}
+                        <div id="uploader" class="hide"></div>
+                        <div class="photo-wrapper">
+                            <img width="200px" src="{{.Data.Profile.DisplayPhoto()}}" />
+                            <a id="photo-delete" class="btn btn-danger" aria-label="Delete">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    {{end}}
+                </div>
+                <div class="cell-md-12 offset-top-30 offset-md-top-20 post-tags group-xs">
+                {{if .Data.Profile.ProfileType == "b"}}
+                    <span class="label-custom label-lg-custom label-rounded-custom label-success" data-toggle="tooltip" title="This is a buyer profile" style="width: 99%;">Customer</span>
+                {{else if .Data.Profile.ProfileType == "s"}}
+                    <span class="label-custom label-lg-custom label-rounded-custom label-danger" data-toggle="tooltip" title="This is a seller profile" style="width: 99%;">Seller</span>
+                {{else}}
+                    <span class="label-custom label-lg-custom label-rounded-custom label-primary" data-toggle="tooltip" title="This is a service provider profile" style="width: 99%;">Service Provider</span>
+                {{end}}
+                </div>
+                <div class="cell-md-12 offset-top-30 offset-md-top-20">
+                  <div class="form-group">
+                    <label for="heading" class="form-label rd-input-label">Heading</label>
+                    <input id="heading" type="text" name="title" value="{{ .Data.Profile.HeadingDisplay() }}" class="form-control" data-constraints='@Required(label="Heading")'>
+                  </div>
+                </div>
+                {{ if .Data.Profile.ProfileType == "b"}}
+                <div class="cell-md-12 offset-top-30 offset-md-top-20">
+                    <div class="form-group">
+                        <label for="tags" class="form-label rd-input-label">Tags</label>
+                        <select id="tags" name="tags" value="" class="form-control" multiple="multiple">
+                        {{if .Data.Profile.Tags != "" }}
+                            {{range tag := .Data.Profile.Tags}}
+                            <option value="{{tag}}" selected="selected">{{tag}}</option>
+                            {{end}}
+                        {{end}}
+                        </select>
+                    </div>
+                </div>
+                {{ else}}
+                
+                    {{if .Data.Profile.ProfileType == "s" }}
+
+                    {{else}}
+
+                    {{ end }}
+
+                {{ end }}
+                {{ if .Data.Profile.ProfileType == "s" || .Data.Profile.ProfileType == "e" }}
+                <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                    <div class="form-group">
+                        <label for="title" class="form-label rd-input-label">What do you sell?</label>
+                        <input id="title" type="text" name="title" value= "{{.Data.Profile.Title}}"class="form-control" data-constraints='@Required(label="Title")'>
+                    </div>
+                </div>
+                {{ else }}
+                <div class="cell-md-3 offset-top-30 offset-md-top-20">
+                    {{ if .Data.Profile.ProfileType != "b"}}
+                    <div class="form-group">
+                  
+                        <label for="service-category" class="form-label rd-input-label">Job title, skill, or profession</label>                      
+
+                        <select id="service-category" type="text" name="service-category" class="form-control"
+                        data-placeholder="Job title, service category, or profession" data-delay="250" data-tags="true" data-minimum-results-for-search="Infinity">                            
+                                  {{ range element := .Data.serviceTypes }} 
+                                    <optgroup label={{element.Text}}>
+                                      
+                                       {{range category := element.Children}}
+                                        <option value="{{category.Id}}">{{category.Name}}</option>
+                                       {{end}}
+                                    </optgroup>  
+                                    
+                                  {{ end }}                                    
+                        </select>
+                    
+                    </div>
+                    {{ end }}
+                </div>
+                {{ if .Data.Profile.ProfileType == "p"}}
+                <div class="cell-md-3 offset-top-30 offset-md-top-20">
+                    <div class="form-group">
+                        <label for="title" class="form-label rd-input-label">What service do you provide?</label>
+                        <input id="title" type="text" name="title" value= "{{.Data.Profile.Title}}"class="form-control" data-constraints='@Required(label="Title")'>
+                    </div>
+                </div>  
+                {{ end }}                  
+                {{ end }}
+                {{ if .Data.Profile.ProfileType != "b"}}
+                <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                  <div class="form-group">
+                    <label for="tags" class="form-label rd-input-label">Tags</label>
+                    <select id="tags" name="tags" value="{{ .Data.Profile.Tags }}" class="form-control" multiple="multiple">
+                        {{if .Data.Profile.Tags != "" }}
+                            {{range tag := .Data.Profile.Tags}}
+                            <option value="{{tag}}" selected="selected">{{tag}}</option>
+                            {{end}}
+                        {{end}}
+                    </select>
+                  </div>
+                </div>
+                <div class="cell-md-4 offset-top-30 offset-md-top-20">
+                  <div class="form-group">
+                    <label for="fee" class="form-label rd-input-label">{{ if .Data.Profile.ProfileType == "p"}} Fee {{ else }} Price {{ end }}</label>
+                    <input id="fee" type="text" name="fee" value="{{ .Data.Profile.Fee }}" class="form-control">
+                  </div>
+                </div>
+                <div class="cell-md-8 offset-top-30 offset-md-top-20">
+                  <div class="form-group">
+                    <label for="paymentNotes" class="form-label rd-input-label">Payment notes</label>
+                    <input id="paymentNotes" type="text" name="paymentNotes" value="{{ .Data.Profile.PaymentNotes }}" class="form-control">
+                  </div>
+                </div>
+                {{ end }}
+                <div class="cell-lg-12 offset-top-30 offset-md-top-20">
+                  <div class="form-group">
+                    <label for="description" class="form-label rd-input-label">Description</label>
+                    <textarea id="description" name="description" data-constraints='@Required(label="Description")' style="height: 179px;" class="form-control">{{ .Data.Profile.Description }}</textarea>
+                  </div>
+                </div>
+            </div>
+            <div class="group group-xl offset-top-30 text-center text-md-left">
+                <input id="id" type="hidden" name="id" value="{{ .Data.Profile.ProfileID }}" />
+                <input id="profileType" type="hidden" name="profileType"  value="{{ .Data.Profile.ProfileType }}" />
+                <input id="photoURL" type="hidden" name="photoURL" value="{{ .Data.Profile.PhotoURL }}" />
+                <button type="submit" class="btn btn-primary">Save</button> <a href="/profiles" class="btn btn-default">Cancel</a> 
+                {{ if .Data.Profile.ProfileID > 0 }}
+                {{ if .Data.Profile.ProfileType == "b"}}
+                <!-- not sure if we want to put anything here, leave blank for now -->
+                {{ else }}
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#profileDeleteModal">Delete</button>
+                {{ end }}
+                {{ end }}
+            </div>
+            {{ if .Data.Profile.ProfileID > 0 }}
+                {{ if .Data.Profile.ProfileType == "b"}}
+                    <p><small><em>The default Customer profile is automatically created when you register and is not able to be deleted.</em></small></p>
+                {{ end }}
+            {{ end }}
+        </form>
+    </div>
+</div>
+
+            
+{{ end }}
+
+{{ block BodyFooterIncludes() }}
+<div id="profileDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Are you sure?</h4>
+          </div>
+          <div class="modal-body">
+            <p>This action is not reversable. Once you delete this profile, it can not be retrieved. Delete profile?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">No, don't delete</button>
+            <button type="button" id="profile-delete" class="btn btn-danger">Delete</button>
+          </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/template" id="qq-template">
+    <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="Drop profile photo here">
+        <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+            <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+        </div>
+        <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+            <span class="qq-upload-drop-area-text-selector"></span>
+        </div>
+        <div class="qq-upload-button-selector qq-upload-button">
+            <div>Select a file</div>
+        </div>
+        <span class="qq-drop-processing-selector qq-drop-processing">
+            <span>Processing dropped file...</span>
+            <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+        </span>
+        <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+            <li>
+                <div class="qq-progress-bar-container-selector">
+                    <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                </div>
+                <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+                <span class="qq-upload-file-selector qq-upload-file"></span>
+                <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
+                <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                <span class="qq-upload-size-selector qq-upload-size"></span>
+                <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Cancel</button>
+                <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
+                <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
+                <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+            </li>
+        </ul>
+
+        <dialog class="qq-alert-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">Close</button>
+            </div>
+        </dialog>
+
+        <dialog class="qq-confirm-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">No</button>
+                <button type="button" class="qq-ok-button-selector">Yes</button>
+            </div>
+        </dialog>
+
+        <dialog class="qq-prompt-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <input type="text">
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">Cancel</button>
+                <button type="button" class="qq-ok-button-selector">Ok</button>
+            </div>
+        </dialog>
+    </div>
+</script>
+<script>
+
+
+$(document).ready(function(e) {
+
+    var csrftoken = $('meta[name="csrf-token"]').attr('content');
+    var uploader = new qq.FineUploader({
+        element: document.getElementById("uploader"),
+        debug: true,
+        multiple: false,
+        request: {
+            endpoint: '/profile/upload-photo',
+                params: {
+                    "csrftoken": csrftoken
+                }
+        }, validation: {
+            sizeLimit: 1024 * 1024 * 4
+        },
+        deleteFile: {
+            enabled: true, // defaults to false
+            endpoint: '/profile/delete-photo'
+        },
+        retry: {
+            enableAuto: true
+        },
+        callbacks: {
+            onComplete: function(id, name, responseJSON) {
+                console.log(id);
+                console.log(name);
+                console.log(responseJSON);
+                $("#photoURL").val(responseJSON.filename);
+            },
+            onSubmitDelete: function(id) {
+                var name = this.getName(id);
+                console.log(name);
+                this.setDeleteFileParams({filename: name, csrftoken: $('meta[name="csrf-token"]').attr('content')}, id);
+            },
+            onDeleteComplete: function(id, xhr, isError) {
+                $("#photoURL").val("");
+            }
+        }
+    });
+
+    $("#uploader.hide").hide();
+});
+
+$("#service-category").select2();
+</script>
+    {{if .Data.Profile.ServiceCategory != "" }}
+    {{if .Data.Profile.ProfileType != "b" }}
+    <script>
+        $('#service-category').val("{{.Data.Profile.ServiceCategory}}");
+        $('#service-category').trigger('change');
+    </script>
+    {{ end }}
+    {{ end }}
+{{ end }}

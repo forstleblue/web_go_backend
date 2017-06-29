@@ -1,0 +1,75 @@
+<div {{ if .Data.ParentPage == "find-person" }} class="post-wrapper cell-sm-9 cell-md-3"  {{ else }}  class="post-wrapper cell-sm-12 cell-md-4"  {{ end }}>
+    <div class="post post-modern">
+        <!-- Post media-->
+        <header class="post-media">
+          <div class="text-left" style="cursor: pointer; background-image: url('{{profile.DisplayPhoto()}}');position: relative; background-size: contain; background-repeat:no-repeat;background-position:50% 50%; height: 270px">
+            
+            <div style="height:40px; background: rgba(255, 255, 255, 0.4); text-align:center;"> 
+              <label style="font-size: 25px; color: black; height: 40px; display: inline-block; overflow: hidden"><b>{{profile.User.FirstName}}  {{profile.User.LastName}}</b></label>             
+            </div>
+            {{ if .Data.ParentPage == "booking" }}
+              <a style="display:block; width:100%; height:100%">
+            {{ else }}
+              {{ if .Data.UserID == profile.User.UserID && .Data.ParentPage != "Dashboard" }}            
+              <a style="display:block; width:100%; height:100%" href="/edit-profile/{{ profile.ProfileUUID }}">
+              {{ else }}
+              <a style="display:block; width:100%; height:100%" href="/profile/{{ profile.ProfileUUID }}">
+            {{ end }}
+            {{ end }}
+            
+            {{ if profile.Fee != ""}}
+            <span style="background-color:rgba(0, 0, 0, 0.56); color: white; border-radius: 5px; position: absolute; bottom: 3px; left: 10px; " data-toggle="tooltip" data-original-title="{{ profile.PaymentNotes }}">{{ profile.Fee }}</span>
+            {{ end }}
+            </a>                             
+          </div>
+          <div class="post-tags group-xs">
+            {{ if profile.ProfileType == "b"}}
+            <span class="label-custom label-lg-custom label-rounded-custom label-success" data-toggle="tooltip" title="Buyer profile" style="width: 99%;">Customer</span>
+            {{ else if profile.ProfileType == "s"}}
+            <span class="label-custom label-lg-custom label-rounded-custom label-danger" data-toggle="tooltip" title="Seller profile" style="width: 99%;">{{ profile.TitleDisplay() }}</span>
+            {{ else}}
+            <span class="label-custom label-lg-custom label-rounded-custom label-primary" data-toggle="tooltip" title="Service provider profile" style="width: 99%;">{{ profile.TitleDisplay() }}</span>
+            {{ end }}
+          </div>
+        </header>
+        <!-- Post content-->
+        <section class="post-content text-left" style="padding-top:5px">   
+          {{ if feedbackAverage.Count != 0 }}
+          <div class="row">
+            <div class="col-sm-9" style="height: 40px">
+              <input class="starscore" name="starscore-1" value="{{feedbackAverage.Score}}" class="rating-loading" data-size="xs">
+              <br/>
+            </div>
+            <div class="col-sm-3" style="margin-top: 5px;">
+              <label style="font-size: 25px">({{feedbackAverage.Count}}) </label>
+            </div>                    
+            <label style="font-size: 15px; margin-left: 20px; margin-bottom: 0px">Exceeds Expectation</label>            
+            {{ if len(feedbackAverage.SdaString) != 0  }}
+            <label style="font-size: 15px; margin-left: 20px; color: red">{{feedbackAverage.SdaString[0]}} </label> 
+            {{ else if len(feedbackAverage.SdaString) == 2}}
+            <label style="font-size: 15px; margin-left: 20px; color: red">{{feedbackAverage.SdaString[0]}}. {{feedbackAverage.SdaString[1]}}. </label> 
+            {{ else if len(feedbackAverage.SdaString) == 3}}
+            <label style="font-size: 15px; margin-left: 20px; color: red">{{feedbackAverage.SdaString[0]}}. {{feedbackAverage.SdaString[1]}}. {{feedbackAverage.SdaString[2]}}</label> 
+            {{ end }}
+          </div>        
+          <hr style=" height:1px; border:none;color:black;background-color:black; margin-bottom: 0px;"/> 
+          {{ end }}
+          
+          <!-- Post Title-->
+          <div class="post-title">
+            <h6 class="offset-top-10">{{ profile.HeadingDisplay() }}</h6>
+          </div>
+          <!-- Post Body-->
+          <div class="post-body offset-bottom-30">
+            <p>{{ profile.ShortDescription() }}</p>
+            
+            {{if .IsLoggedIn }}
+              {{ distance := profile.DistanceFrom(.User.Lat, .User.Lng)}}
+              {{ if distance >= 0 }}
+              <p class="distance">{{ distance }} km</p>
+              {{ end }}
+            {{ end }}
+          </div>
+        </section>
+    </div>
+</div>

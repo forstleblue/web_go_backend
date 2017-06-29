@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" style="background:#cacaca;min-height:100%">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body class="container">
+    <h2>Payment Request</h2>
+    <hr>
+    <p>Hi {{ReceiveUser.FirstName}},</p><br/>
+    <p>{{SendUser.FirstName}} sent you a payment request for a booking, so when UR ready, here are the details:<br/><br/>    
+    <strong>Service Provider:</strong> <a href="{{FindPersonURL}}">{{SendUser.FullName()}}</a><br/> 
+    <strong>Profile:</strong>{{ProfileServiceName}}<br/> 
+    <strong>Booking ID:</strong>{{BookingID}}<br/> 
+    <strong>Date:</strong> {{Date}}<br/> 
+    <strong>Start Time:</strong>{{StartTime}}<br/> 
+    <strong>Duration:</strong> {{Duration}} hours<br/> 
+    <strong>Total Cost:</strong> AU${{Cost}}<br/> 
+    <strong>Comments:</strong>{{Comments}}</p><br/> 
+
+    <div style="margin-top: 30px">
+        <a href="#"><button class="btn btn-danger">Pay</button></a>
+        <a href="{{BaseURL}}/send-payment-request/{{BookingUUID}}/{{BookingHistoryUUID}}"><button class="btn btn-success">Amend</button></a>
+    </div>
+
+    <div style="margin-top: 30px">
+        Or <a href="{{DashboardURL}}">click here</a> to access the booking request for more options. 
+    </div>
+
+    <div style="margin-top: 30px">
+        <strong>Regards,</strong><br/>
+        <strong>UR Local</strong>
+    </div>
+    
+    <hr>
+    <p><img src="{{ImageURL}}"></p>
+
+</body>
+</html>

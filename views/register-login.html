@@ -1,0 +1,150 @@
+{{ extends "layout-home.html" }} 
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+	<!-- Modern Breadcrumbs-->
+	<section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+		<div data-speed="0.2" data-type="media" data-url="images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+		<div data-speed="0" data-type="html" class="rd-parallax-layer">
+			<div class="bg-overlay-gray-darkest">
+				<div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+					<div class="text-extra-big text-bold veil reveal-md-block">Login or Register</div>
+					<ul class="list-inline list-inline-dashed p offset-top-0 offset-lg-top-20">
+						<li><a href="/">Home</a></li>
+						<li>Login or Register
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+{{ end }} 
+
+{{ block Body() }}
+<main class="page-content">
+	<!--Section Login Register-->
+	<section class="section-98 section-sm-110 section-bottom-66">
+		<div class="shell">
+			<h2 class="text-bold">Sign In</h2>
+			<hr class="divider bg-mantis">
+			<div class="offset-sm-top-66">
+				<!-- Responsive-tabs-->
+				<div id="s" data-type="horizontal" class="responsive-tabs responsive-tabs-classic">
+					<ul data-group="tabs-group-default" class="resp-tabs-list tabs-1 text-center tabs-group-default">
+						<li>Login</li>
+						<li>Registration</li>
+					</ul>
+					<div data-group="tabs-group-default" class="resp-tabs-container text-left tabs-group-default">
+						<div>
+							<div class="range range-xs-center section-34">
+								<div class="cell-xs-8 cell-sm-6 cell-md-4">
+									<div class="text-center">
+										<ul class="list-inline">
+											<li>
+												<a href="/auth/facebook" class="icon fa fa-facebook icon-xxs icon-circle icon-darkest-filled"></a>
+											</li>
+											<li>
+												<a href="javascript:toastr['info']('Coming soon!', 'Not yet implemented');" class="icon fa fa-paypal icon-xxs icon-circle icon-darkest-filled"></a>
+											</li>
+										</ul>
+									</div>
+									<div class="offset-top-30 text-center">
+										<p>or login:</p>
+										<form id="login-form" data-form-output="form-output-global" method="post" action="/user/login" class="login-form text-left">
+											<div role="alert" class="alert alert-danger">
+												<p class="offset-top-0">Error! Check the form and try submitting again.</p>
+											</div>
+											<div class="form-group">
+												<label for="form-login-email" class="form-label rd-input-label">Email</label>
+												<input id="form-login-email" type="text" name="email" data-constraints='@Required(label="Email") @Email(label="Email")' class="form-control bg-white">
+											</div>
+											<div class="form-group offset-top-24">
+												<label for="form-login-password" class="form-label rd-input-label">Password</label>
+												<input id="form-login-password" type="password" name="password" data-constraints='@Required(label="Password")' class="form-control bg-white">
+											</div>
+											<div class="offset-top-24">
+												<button type="submit" class="btn btn-primary btn-block">sign in</button>
+											</div>
+											<div class="offset-top-24">
+												<a href="/reset-password-send-mail" style="text-align: center">Forgot your password?</a>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="range range-xs-center section-34">
+								<div class="cell-xs-8 cell-sm-6 cell-md-6">
+									<div class="text-center">
+										<form id="register-form" data-form-output="form-output-global" method="post" action="/user/register" class="register-form text-left">
+											<div role="alert" class="alert alert-danger">
+												<p class="offset-top-0">Error! Check the form and try submitting again.</p>
+											</div >
+											<div class="row"> 	
+												<div class="col-sm-4 col-md-2">
+													<label style="padding-top: 10px; font-size: 13px">Name:</label>
+												</div>
+												<div class="col-sm-12 col-md-5">
+													<div class="form-group ">
+														<label for="form-register-firstname" class="form-label rd-input-label">First Name</label>
+														<input id="form-register-firstname" type="text" data-constraints='@Required(label="First Name")' class="form-control bg-white">
+													</div>													
+												</div>
+												<div class="col-sm-12 col-md-5">
+													<div class="form-group">
+														<label for="form-register-lastname" class="form-label rd-input-label">Last Name</label>
+														<input id="form-register-lastname" type="text" data-constraints='@Required(label="Last Name")' class="form-control bg-white">
+													</div>
+												</div>
+											</div>
+
+											<div class="row offset-top-24">
+												<div class="col-sm-4 col-md-2">
+													<label style="padding-top: 10px; font-size: 13px">Email:</label>
+												</div>
+												<div class="col-sm-12 col-md-10">
+													<div class="form-group">
+														<label for="form-register-email" class="form-label rd-input-label">Email:</label>
+	                        							<input id="form-register-email" name="email" type="text" data-constraints='@Required(label="Email") @Email' class="form-control bg-white">
+													</div>
+												</div>
+												
+											</div>
+
+											<div class="row offset-top-24">
+												<div class="col-sm-4 col-md-2">
+													<label style="padding-top: 10px; font-size: 13px">Password:</label>
+												</div>
+												<div class="col-sm-12 col-md-5">
+													<div class="form-group ">
+														<label for="form-register-password" class="form-label rd-input-label">Password:</label>
+														<input id="form-register-password" name="password" type="password" data-constraints='@Required(label="Password")' class="form-control bg-white">
+													</div>
+												</div>
+												
+												<div class="col-sm-12 col-md-5">
+													<div class="form-group ">
+														<label for="form-register-confirm-password" class="form-label rd-input-label">Confirm Password:</label>
+														<input id="form-register-confirm-password" name="confirmpassword" type="password" data-constraints='@Required(label="Confirm password")' class="form-control bg-white">
+													</div>
+												</div>												
+											</div>
+											
+											<div class="offset-top-41">
+												<button type="submit" class="btn btn-primary btn-block">create an account</button>
+											</div>
+										</form>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+{{ end }}

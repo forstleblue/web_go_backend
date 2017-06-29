@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" class="wide wow-animation smoothscroll scrollTo">
+  <head>
+    <!-- Site Title-->
+    <title>{{ isset(.Title) ? "UR Local - " + .Title : "UR Local" }}</title>
+    <meta charset="utf-8">
+    <meta name="csrf-token" content="{{CSRF}}">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="keywords" content="intense web design multipurpose template">
+    <meta name="date" content="Dec 26">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    
+    <!-- Social media share tags -->
+    {{ block SMMetaTagIncludes() }}
+    <!-- Facebook -->
+    <meta property="og:title" content='{{ isset(.Title) ? "UR Local - " + .Title : "UR Local" }}'/>
+    <meta property="og:site_name" content="UR Local"/>
+    <meta property="og:description" content="Local market for trusted providers"/>
+    <meta property="og:image" content=""/>
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@urlocal" />
+    <meta name="twitter:title" content="UR Local" />
+    <meta name="twitter:description" content="Local market for trusted providers" />
+    <meta name="twitter:image" content="" />
+    {{ end }}
+
+    <!-- Stylesheets-->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,700,700italic">
+    <link rel="stylesheet" href="/css/lib.css">
+    <link rel="stylesheet" href="/css/style.css">
+    
+ 		<!--[if lt IE 10]>
+    <div style="background: #212121; padding: 10px 0; box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3); clear: both; text-align:center; position: relative; z-index:1;"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="/images/ie8-panel/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <script src="/js/html5shiv.min.js"></script>
+		<![endif]-->
+
+    <script type="text/javascript">
+    var isProduction = {{.IsProduction}};
+    </script>
+    <style>
+      
+    </style>
+    <!-- Header includes -->
+    {{ block HeaderIncludes() }}{{ end }}    
+  </head>
+  <body>
+    <!-- Page-->
+    <div class="page text-center">
+    {{ block BodyHeaderIncludes() }}{{ end }}
+      <!-- Page Head-->
+      <header class="page-head slider-menu-position">
+        <!-- - RD Navbar-->
+        <!-- RD Navbar Transparent-->
+        <div class="rd-navbar-wrap">
+          <nav data-md-device-layout="rd-navbar-fixed" data-lg-device-layout="rd-navbar-static" class="rd-navbar container rd-navbar-floated rd-navbar-dark rd-navbar-dark-transparent" data-lg-auto-height="true" data-md-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-stick-up="true">
+            
+            <div class="rd-navbar-inner">
+              <!-- RD Navbar Panel -->
+              <div class="rd-navbar-panel" >
+                <!-- RD Navbar Toggle-->
+                <button data-rd-navbar-toggle=".rd-navbar, .rd-navbar-nav-wrap" class="rd-navbar-toggle" style="width: 30px;"><span></span></button>
+                <!-- RD Navbar Top Panel Toggle-->
+                {{if .IsLoggedIn }}
+                <ul class="rd-navbar-nav user-nav pull-right" style="margin-left:7px; margin-top:0px; ">
+                  <li style="margin-left: 0px;">
+                  <a href="/dashboard#s1" style="display: inline-block; height: 55px;"><span class="text-middle"><span class="fa fa-wechat" style="font-size:30px; margin-top: 15px;">
+                    {{if len(.UnreadMessages)}}
+                    <span class="badge">{{len(.UnreadMessages)}}</span>
+                    {{end}}
+                  </span></span></a>
+                  <ul class="rd-navbar-dropdown" style="background: #191919; margin-top:0px;">
+                    {{range message := .UnreadMessages}}
+                    {{profile := message.GetProfileByProfileID(message.ProfileID)}}
+                    <li><a href="/rooms/{{message.RoomUUID}}"><span class="text-middle">{{message.GetUserByUserID(profile.User.UserID).FullName()}}:  </span><span class="text-middle">{{message.ReduceLengthOfMessageText(12)}}</span></a></li>
+                    {{end}}
+                    {{if len(.UnreadMessages)}}
+                    
+                    {{else}}
+                    <li><a href="">No new messages</a></li>
+                    {{end}}
+                  </ul>
+                  </li>
+                </ul>        
+                <ul class="rd-navbar-nav user-nav pull-right" style="margin-top: 0px;">
+                  <li>
+                    <a href="/dashboard#s2"><span class="text-middle"><img class="profile" src="{{.User.DisplayPhoto()}}" style="width: 40px; height: 40px; margin-top:-5px;"/>
+                      {{if .UnreadNotifications != 0}} <span class="badge">{{.UnreadNotifications}}</span> {{ end }}
+                    </span></a>               
+                    <ul class="rd-navbar-dropdown" style="background: #191919;">
+                      <li class='{{ (.Path == "/dashboard") ? "active" : ""}}'><a href="/dashboard"><span class="text-middle">Dashboard</span></a></li>
+                      <li class='{{ (.Path == "/profiles") ? "active" : ""}}'><a href="/profiles"><span class="text-middle">Profiles</span></a></li>                      
+                      <li role="presentation" class='{{ (.Path == "/reputation-sources") ? "active" : ""}}'><a href="/reputation-sources">Reputation Sources</a></li>
+                      <li role="presentation" class='{{ (.Path == "/account-settings") ? "active" : ""}}'><a href="/account-settings">Account Settings</a></li>
+                      <li role="presentation" class='{{ (.Path == "/payment-methods") ? "active" : ""}}'><a href="/payment-methods">Payment Methods</a></li>
+
+                      <li><a href="/user/logout"><span class="text-middle">Logout</span></a></li>
+                    </ul>
+                  </li>
+                </ul>
+                {{else}}
+                <a href="/login-register" style="margin-left:20px; max-height: 40px; line-height: 22px;" class="btn btn-primary loginbtn pull-right"><span class="big">Login / Register</span></a>
+                {{end}}
+                <!--Navbar Brand-->
+                <div class="rd-navbar-brand">
+                  <a href="/"><img height="40" src="/images/logo.png" alt="Home page" style="vertical-align: top" /></a>
+                 <h2 class="text-white" style="display: inline-block; margin: 0px; font-weight:600">Local</h2>
+                </div>
+              </div>
+              <div class="rd-navbar-menu-wrap">
+                <div class="rd-navbar-nav-wrap">
+                  <div class="rd-navbar-mobile-scroll">
+                    <!--Navbar Brand Mobile-->
+                    <div class="rd-navbar-mobile-brand">
+                      <a href="/"><img height='40' src='/images/logo.png' alt=''/></a>
+                      <a href="/">Local</a>
+                    </div>
+                    <!-- RD Navbar Nav-->
+                    <ul class="rd-navbar-nav">
+                      <li class='{{ (.Path == "/") ? "active" : ""}}'><a href="/"><span>Home</span></a></li>
+                      <li class='{{ (.Path == "/find-person") ? "active" : ""}}'><a href="/find-person"><span>Find a Person</span></a></li>
+                      <!--<li><a href="/blog"><span>Blog</span></a></li>-->
+                    </ul>
+                  </div>
+                </div>
+                <!--RD Navbar Search-->
+                
+              </div>
+            </div>
+          </nav>
+        </div>
+        {{ block CustomHeader() }}{{ end }}
+      </header>
+
+      <!-- Page Contents-->
+      {{ block Body() }}{{ end }}
+
+      <!-- Page Footer-->
+      <!-- Default footer-->
+      <footer class="section-relative section-top-66 section-bottom-34 page-footer bg-gray-darkest">
+        <div class="shell">
+          <div class="range range-sm-center text-md-left">
+            <div class="cell-sm-8 cell-md-12">
+              <div class="range range-xs-center">
+                <div class="cell-xs-10 cell-md-5 cell-md-push-2">
+                  <h6 class="text-uppercase text-spacing-60 font-default text-white">Newsletter</h6>
+                  <div class="inset-lg-right-80">
+                    <p class="text-muted">Keep up with our always upcoming  news and updates. Enter your e-mail and subscribe to our newsletter.</p>
+                  </div>
+                  <div class="offset-top-30">
+                    <div class="inset-lg-right-93">
+                      <form data-form-output="form-subscribe-footer" data-form-type="subscribe" method="post" action="user/register" class="rd-mailform">
+                        <div class="form-group">
+                          <div class="input-group input-group-sm"><span class="input-group-addon"><span class="input-group-icon mdi mdi-email"></span></span>
+                            <input placeholder="Type your E-Mail" type="email" name="email" data-constraints="@Required @Email" class="form-control"><span class="input-group-btn">
+                              <button type="submit" class="btn btn-sm btn-primary">Subscribe</button></span>
+                          </div>
+                        </div>
+                        <div id="form-subscribe-footer" class="form-output"></div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="cell-xs-4 cell-md-2 offset-top-50 offset-md-top-0 cell-md-push-3 text-xs-left">
+                  <h6 class="text-uppercase text-spacing-60 font-default text-white">Cities</h6>
+                  <div class="reveal-block">
+                    <div class="reveal-inline-block">
+                      <ul class="list list-unstyled list-inline-primary">
+                        <li class="text-primary"><a href="#">Sydney</a></li>
+                        <li class="text-primary"><a href="#">Melbourne</a></li>
+                        <li class="text-primary"><a href="#">Brisbane</a></li>
+                        <li class="text-primary"><a href="#">Adelaide</a></li>
+                        <li class="text-primary"><a href="#">Tasmania</a></li>
+                        <li class="text-primary"><a href="#">Perth</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="cell-xs-4 cell-md-2 offset-top-50 offset-md-top-0 cell-md-push-3 text-xs-left">
+                  <h6 class="text-uppercase text-spacing-60 font-default text-white">Categories</h6>
+                  <div class="reveal-block">
+                    <div class="reveal-inline-block">
+                      <ul class="list list-unstyled list-inline-primary">
+                        <li class="text-primary"><a href="#">Care/Help</a></li>
+                        <li class="text-primary"><a href="#">Drive/Deliver</a></li>
+                        <li class="text-primary"><a href="#">Maintain/Repair</a></li>
+                        <li class="text-primary"><a href="#">Cook/Clean</a></li>
+                        <li class="text-primary"><a href="#">Teach/Advise</a></li>
+                        <li class="text-primary"><a href="#">Accounting/Tax</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="cell-md-3 offset-top-50 offset-md-top-0 cell-md-push-1">
+                  <!-- Footer brand-->
+                  <div class="footer-brand"><a href="/"><img width='180' src='/images/logo-big.png' alt=''/></a></div>
+                  <ul class="list-inline list-inline-sm reveal-inline-block offset-top-34 post-meta text-dark list-inline-primary">
+                    <li><a href="#"><span class="icon icon-xxs fa-facebook"></span></a></li>
+                    <li><a href="#"><span class="icon icon-xxs fa-twitter"></span></a></li>
+                    <li><a href="#"><span class="icon icon-xxs fa-google-plus"></span></a></li>
+                    <li><a href="#"><span class="icon icon-xxs fa-youtube-play"></span></a></li>
+                    <li><a href="#"><span class="icon icon-xxs fa-instagram"></span></a></li>
+                  </ul>
+                  <p class="text-dark offset-top-50">Universal Reputations &copy; <span id="copyright-year"></span>{{ if .Version }}<br/>{{.Version}}{{ end }}<br/><a href="#" class="text-primary">Privacy Policy</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    
+    
+      <!--Login Modal-->
+      <div class="modal modal-custom fade" id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+
+            <div class="modal-header text-center">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+              <h2>Login or Register</h2>
+            </div>
+            <div class="modal-body">
+
+              <ul role="tablist" id="tabs-1" class="tabs nav nav-tabs">
+                  <li role="presentation" class="active"><a href="#tab11" role="tab">Login</a></li>
+                  <li role="presentation"><a href="#tab22" role="tab">Register</a></li>
+              </ul>
+
+              <div class="tab-content tab-content-vert text-sm-left" style="height:450px">
+
+                <div role="tabpanel" id="tab11" class="tab-pane fade active in">      
+                  <div>        
+                      <div class="range range-xs-center section-34">
+                        <div class="cell-xs-8 cell-sm-7 cell-md-10">
+                          <div class="text-center">
+                            <p>Enter with:</p>
+                            <ul class="list-inline">
+                              <li><a href="javascript:toastr['info']('Facebook login coming soon!', 'Not yet implemented');" class="icon fa fa-facebook icon-xxs icon-circle icon-darkest-filled"></a></li>
+                              <li><a href="javascript:toastr['info']('Coming soon!', 'Not yet implemented');" class="icon fa fa-paypal icon-xxs icon-circle icon-darkest-filled"></a></li>
+                            </ul>
+                          </div>
+                          <div class="offset-top-30  text-center">
+                              <p>...or login:</p>
+                          </div>
+
+                          <form id="login-form" data-form-output="form-output-global" method="post" action="/user/login" class="login-form offset-top-24 text-left">
+                            <div role="alert" class="alert alert-danger">
+                              <p class="offset-top-0">Error! Check the form and try submitting again.</p>
+                            </div>
+                            <div class="form-group">
+                              <label for="form-login-email" class="form-label rd-input-label">Email</label>
+                              <input id="form-login-email" type="text" name="email" data-constraints='@Required(label="Email") @Email(label="Email")' class="form-control bg-white">
+                            </div>
+                            <div class="form-group offset-top-24">
+                              <label for="form-login-password" class="form-label rd-input-label">Password</label>
+                              <input id="form-login-password" type="password" name="password" data-constraints='@Required(label="Password")' class="form-control bg-white">
+                              <input id="form-login-hidden" type="hidden" name="pageName"  class="form-control bg-white">
+                            </div>
+                            <div class="offset-top-30">
+                              <button type="submit" class="btn btn-primary btn-block">sign in</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+
+                <div role="tabpanel" id="tab22" class="tab-pane fade">
+                  <div>
+                    <div class="range range-xs-center section-34">
+                      <div class="cell-xs-8 cell-sm-7 cell-md-10">
+                        <!-- RD Mailform-->                        
+                        <form id="register-form" data-form-output="form-output-global" method="post" action="/user/register" class="register-form text-left">
+                          <div role="alert" class="alert alert-danger">
+                            <p class="offset-top-0">Error! Check the form and try submitting again.</p>
+                          </div >
+                          <div class="row">   
+                            <div class="col-sm-4 col-md-2">
+                              <label style="padding-top: 10px; font-size: 13px">Name:</label>
+                            </div>
+                            <div class="col-sm-12 col-md-5">
+                              <div class="form-group ">
+                                <label for="form-register-firstname" class="form-label rd-input-label">First Name</label>
+                                <input id="form-register-firstname" type="text" data-constraints='@Required(label="First Name")' class="form-control bg-white">
+                              </div>                          
+                            </div>
+                            <div class="col-sm-12 col-md-5">
+                              <div class="form-group">
+                                <label for="form-register-lastname" class="form-label rd-input-label">Last Name</label>
+                                <input id="form-register-lastname" type="text" data-constraints='@Required(label="Last Name")' class="form-control bg-white">
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row offset-top-24">
+                            <div class="col-sm-4 col-md-2">
+                              <label style="padding-top: 10px; font-size: 13px">Email:</label>
+                            </div>
+                            <div class="col-sm-12 col-md-10">
+                              <div class="form-group">
+                                <label for="form-register-email" class="form-label rd-input-label">Email</label>
+                                            <input id="form-register-email" name="email" type="text" data-constraints='@Required(label="Email") @Email' class="form-control bg-white">
+                              </div>
+                            </div>                        
+                          </div>
+
+                          <div class="row offset-top-24">
+                            <div class="col-sm-4 col-md-2">
+                              <label style="padding-top: 10px; font-size: 13px">Password</label>
+                            </div>
+                            <div class="col-sm-12 col-md-5">
+                              <div class="form-group ">
+                                <label for="form-register-password" class="form-label rd-input-label">Password</label>
+                                <input id="form-register-password" name="password" type="password" data-constraints='@Required(label="Password")' class="form-control bg-white">
+                              </div>
+                            </div>
+                            
+                            <div class="col-sm-12 col-md-5">
+                              <div class="form-group ">
+                                <label for="form-register-confirm-password" class="form-label rd-input-label">Confirm Password</label>
+                                <input id="form-register-confirm-password" name="confirmpassword" type="password" data-constraints='@Required(label="Confirm pwd")' class="form-control bg-white">
+                              </div>
+                            </div>                        
+                          </div>
+                          
+                          <div class="offset-top-30">
+                            <button type="submit" class="btn btn-primary btn-block">create an account</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+
+    </div>
+
+
+
+    <!-- Global Mailform Output-->
+    <div id="form-output-global" class="snackbars"></div>
+    <!-- PhotoSwipe Gallery-->
+    <div tabindex="-1" role="dialog" aria-hidden="true" class="pswp">
+      <div class="pswp__bg"></div>
+      <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+          <div class="pswp__item"></div>
+          <div class="pswp__item"></div>
+          <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+          <div class="pswp__top-bar">
+            <div class="pswp__counter"></div>
+            <button title="Close (Esc)" class="pswp__button pswp__button--close"></button>
+            <button title="Share" class="pswp__button pswp__button--share"></button>
+            <button title="Toggle fullscreen" class="pswp__button pswp__button--fs"></button>
+            <button title="Zoom in/out" class="pswp__button pswp__button--zoom"></button>
+            <div class="pswp__preloader">
+              <div class="pswp__preloader__icn">
+                <div class="pswp__preloader__cut">
+                  <div class="pswp__preloader__donut"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+            <div class="pswp__share-tooltip"></div>
+          </div>
+          <button title="Previous (arrow left)" class="pswp__button pswp__button--arrow--left"></button>
+          <button title="Next (arrow right)" class="pswp__button pswp__button--arrow--right"></button>
+          <div class="pswp__caption">
+            <div class="pswp__caption__center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global includes-->
+    <script src="/js/dist/core.js"></script>    
+    <script src="/js/dist/application.js"></script>
+    
+
+    <!-- Footer includes -->
+    {{ block BodyFooterIncludes() }}{{ end }}    
+    
+  </body>
+</html>

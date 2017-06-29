@@ -1,0 +1,4 @@
+To create your own config-dev.json for your environment, duplicate config-default.json and rename
+it to config-dev.json
+
+Change database details, etc as needed.

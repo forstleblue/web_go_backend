@@ -1,0 +1,113 @@
+{{ extends "layout-home.html" }}
+
+{{ block SMMetaTagIncludes() }}
+	<!-- Facebook -->
+    <meta property="og:title" content='{{ isset(.Data.Profile.User.FirstName) ? .Data.Profile.User.FirstName : .Data.Profile.User.Email }} {{ isset(.Data.Profile.User.LastName) ? .Data.Profile.User.LastName : "" }} - {{.Data.Profile.Title}} | UR Local'/>
+    <meta property="og:site_name" content="UR Local"/>
+    <meta property="og:description" content="{{ .Data.Profile.ShortDescription() }}"/>
+    <meta property="og:image" content="{{ .Data.Profile.DisplayPhoto() }}"/>
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@urlocal" />
+    <meta name="twitter:title" content='{{ isset(.Data.Profile.User.FirstName) ? .Data.Profile.User.FirstName : .Data.Profile.User.Email }} {{ isset(.Data.Profile.User.LastName) ? .Data.Profile.User.LastName : "" }} - {{.Data.Profile.Title}} | UR Local' />
+    <meta name="twitter:description" content="{{ .Data.Profile.ShortDescription() }}" />
+    <meta name="twitter:image" content="{{ .Data.Profile.DisplayPhoto() }}" />
+{{ end }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+	<!-- Modern Breadcrumbs-->
+	<section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+		<div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+		<div data-speed="0" data-type="html" class="rd-parallax-layer">
+			<div class="bg-overlay-gray-darkest">
+				<div class="shell section-top-98 section-lg-top-155">
+					
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+{{ end }} 
+
+{{ block BodyHeaderIncludes() }}
+    <link rel="stylesheet" href="/css/profile.css">
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">
+    <div class="container branding">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ur-logo">
+                    <img src="/images/logo.png" alt="Universal Reputations"  />
+                    <h2>Universal Reputations</h2>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="platform">
+                    <img src="{{.Data.Platform.GetLogoURL()}}" alt="{{.Data.Platform.Name}}"  />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="jumbotron gray-bg">
+    </div>
+    <div class="container profile">
+        <div class="row full-overview">
+            <div class="col-md-5 profile-identity"><img src="{{.Data.Profile.DisplayPhoto()}}"> <h2>{{.Data.Profile.User.FullName()}}</h2></div>
+            <div class="col-md-7 profile-overview"><p>Based in {{.Data.Profile.User.FormattedAddress()}}, {{.Data.Profile.User.FirstName}} has been a Universal Reputations member since {{.Data.Profile.SinceDateFormatted()}}</p><div class="profile-link"><a href="/profile/{{.Data.Profile.ProfileUUID}}">View UR Profile</a></div></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 feedback feedback-all">
+                <h3>Universal Reputation:</h3>
+                <input id="starscore-all" name="starscore-all" value="{{.Data.Profile.User.FeedbackAverage()/20}}" class="rating-loading"> <div class="feedback-count">({{.Data.Profile.User.FeedbackCount()}})</div>
+                <div class="feedback-description">
+                    {{ if .Data.Profile.User.FeedbackCount() == 0 }}
+                        No ratings available
+                    {{ else }}
+                        {{.Data.Profile.User.FeedbackDescription()}}
+                    {{ end }}
+                </div>
+                <div class="feedback-sda">
+                    {{ if .Data.Profile.User.FeedbackCount() == 0 }}
+                        &nbsp;
+                    {{ else }}
+                        {{.Data.Profile.User.FeedbackTopSDA()}}
+                    {{ end }}
+                </div>
+                <a class="feedback-toggle" href="#feedback-all">See all feedback</a>
+            </div>
+            <div class="col-md-6 feedback feedback-profile">
+                <h3>{{.Data.Platform.Name}} Ratings:</h3>
+                <input id="starscore-profile" name="starscore-profile" value="{{.Data.Profile.FeedbackAverage()/20}}" class="rating-loading"> <div class="feedback-count">({{.Data.Profile.FeedbackCount()}})</div>
+                <div class="feedback-description">
+                    {{ if .Data.Profile.FeedbackCount() == 0 }}
+                        No ratings available
+                    {{ else }}
+                        {{.Data.Profile.FeedbackDescription()}}
+                    {{ end }}
+                </div>
+                <div class="feedback-sda">
+                    {{ if .Data.Profile.FeedbackCount() == 0 }}
+                        &nbsp;
+                    {{ else }}
+                        {{.Data.Profile.FeedbackTopSDA()}}
+                    {{ end }}
+                </div>
+                <a class="feedback-toggle" href="#feedback-all">See all feedback</a>
+            </div>
+        </div>
+    </div>
+</main>
+{{ end }}
+
+{{ block BodyFooterIncludes() }}
+
+    <script>
+    $(document).on('ready', function(){
+        $('.rating-loading').rating({displayOnly: true, step: 0.05});
+    });
+    </script>
+{{end}}

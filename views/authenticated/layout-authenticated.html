@@ -1,0 +1,48 @@
+{{ extends "layout-home.html" }} 
+{{ block CustomHeader() }}
+<div class="context-dark">
+    <!-- Modern Breadcrumbs-->
+    <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+        <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+        <div data-speed="0" data-type="html" class="rd-parallax-layer">
+            <div class="bg-overlay-gray-darkest">
+                <div class="shell section-top-98 section-lg-top-155">
+                    <div class="text-extra-big text-bold veil reveal-md-block">
+                        <span>
+						Dashboard
+						</span>
+                        <span style="margin-left: 20px;">
+						<!--Uer's Reputation widget will place here!-->
+						</span>
+                    </div>
+                    <ul class="list-inline list-inline-dashed p offset-top-0 offset-lg-top-20">
+                        <li><a href="/">Home</a></li>
+                        <li>Dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{{ end }} 
+{{ block Body() }}
+<main class="page-content auth-content {{.PageName()}}">
+    <section class="section-bottom-66">
+        <div class="container">
+            <div class="row offset-top-50 offset-sm-top-66">
+                <div class="col-md-12">
+                    {{ if .User.Postcode == "" }}
+                    <div class="row">
+                        <div role="alert" class="alert alert-danger col-md-10 col-md-offset-1">
+                            <p class="offset-top-0">Without your location, we are unable to display your profiles. <u><a href='/account-settings?f=p'>Click here</a></u> to set your location.</p>
+                        </div>
+                        <br/>
+                    </div>
+                    {{ end }} 
+                    {{ block BodyAuth() }}{{ end }}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{{ end }}

@@ -1,0 +1,23 @@
+You have New Feedback
+
+Hi {{ReceiveUser.FirstName}},
+
+{{SendUser.FirstName}} wrote you a review. Here are the details:
+
+Customer:{{SendUser.FullName()}}
+Your Profile:{{ProfileServiceName}}
+Booking ID:{{BookingID}}
+Date: {{Date}} 
+Start Time:{{StartTime}} 
+Duration: {{Duration}} hours 
+
+Rating  
+Special Degrees of Awesomeness
+Comments
+
+Now that you have both written reviews, we have posted them to your reputation profiles.
+
+{{DashboardURL}}
+
+Regards,
+UR Local

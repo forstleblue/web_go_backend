@@ -1,0 +1,9 @@
+Hi {{ReceiveUser.FullName()}},
+
+You have received a new message from {{SendUser.FirstName}}
+
+Message: {{Message.MessageText}}
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+
+{{DashboardURL}}

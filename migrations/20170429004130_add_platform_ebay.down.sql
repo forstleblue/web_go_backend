@@ -1,0 +1,3 @@
+DROP TABLE platform_ebay;
+
+DROP SEQUENCE platform_ebay_feedback_comment_id_seq;

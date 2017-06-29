@@ -1,0 +1,2 @@
+DROP FUNCTION IF EXISTS get_user_ur(BIGINT);
+DROP TYPE IF EXISTS ur_feedback;

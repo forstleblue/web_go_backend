@@ -1,0 +1,21 @@
+New Booking Request
+
+Hi {{ReceiveUser.FirstName}},
+
+Someone thinks UR awesome!
+{{SendUser.FirstName}} sent you a new booking request. Here are the details:
+
+Customer:{{SendUser.FullName()}}
+Your Profile:{{ProfileServiceName}} 
+Booking ID:{{BookingID}}
+Date:{{Date}}
+Start Time:{{StartTime}}
+Duration: {{Duration}} hours
+Total Cost: AU${{Cost}}
+Comments:{{Comments}}
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+{{DashboardURL}}
+
+Regards,
+UR Local

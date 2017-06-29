@@ -1,0 +1,14 @@
+Hi there! 
+
+We think UR awesome. Do you too?
+
+You registered with {{Platform.Name}}, congratulations. {{Platform.Name}} works with Universal Reputations to help their users develop the best possible reputations so they can be more successful on their platform.
+
+You already have an account on UR, so what we did is link your UR account to your new {{Platform.Name}} account, and we set up a special {{Platform.Name}} profile card for you. 
+
+So you don’t have to do anything, really, we did it all for you and it’s all set up ready to go. Of course, if you want to you can always go to UR and make your reputation even more awesome with the tools we offer.
+
+The team: we are UR.
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+{{DashboardURL}}

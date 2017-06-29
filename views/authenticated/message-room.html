@@ -1,0 +1,176 @@
+{{ extends "layout-home.html" }} 
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+	<!-- Modern Breadcrumbs-->
+	<section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+		<div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+		<div data-speed="0" data-type="html" class="rd-parallax-layer">
+			<div class="bg-overlay-gray-darkest">
+				<div class="shell section-top-98 section-lg-top-155">
+					
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+{{ end }} 
+
+
+
+{{ block BodyFooterIncludes() }}
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('.starscore').rating({displayOnly: true, step: 0.05});
+   {{if .Data.Focus=="r" }}
+      $("#message-text").focus();
+   {{end}}
+
+  });
+
+</script>
+{{ end }}
+
+
+{{ block Body() }}
+<main class="page-content section-98 section-sm-124" style="padding-top:0">
+  
+  <div class="shell">
+    <div class="col-md-4" >
+      {{profile := .Data.Profile}}
+      <div class="offset-top-98">
+        {{feedbackAverage := .Data.Profile.UniversalReputationScore()}}
+        {{ include "/partials/_profile_card.html" }}
+      </div>
+    </div>
+    <div class="container">
+      <div class="col-md-8">
+        <section class="offset-top-98 offset-md-top-30">
+          <h1>Messaging Room</h1>
+          {{range message := .Data.Messages}}
+          {{profile := message.GetProfileByProfileID(message.ProfileID)}}
+          
+          <div class="offset-top-41">
+              <div class="box-comment text-left box-comment-boxed">
+                <div class="media">
+                  <div class="media-left"><img class="img-circle box-comment-img" src="{{profile.DisplayPhoto()}}" alt="" width="60" height="60"></div>
+                    <div class="media-body">
+                      <header class="box-comment-header unit unit-vertical unit-spacing-xxs unit-md unit-md-horizontal unit-md-inverse unit-md-middle unit-md-align-right">
+                        <div class="unit-left">
+                          <ul class="box-comment-meta list-inline list-inline-sm text-dark">
+                            <li><span class="box-comment-icon mdi mdi-clock"></span>
+                              <time datetime="2016-01-01">{{message.Created.Format("2006-01-02 15:04:05")}}</time>
+                            </li>
+                            <!--<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>-->
+                            <li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>
+                          </ul>
+                        </div>
+                        <div class="unit-body">
+                          <h6 class="box-comment-title">{{profile.User.FullName()}}</h6>
+                        </div>
+                      </header>
+                      <section class="box-comment-body">
+                        <p>{{message.MessageText}} </p>
+                      </section>
+                    </div>
+                </div>
+              </div>
+          </div>
+          {{end}}
+          
+          <h4 class="offset-top-34 text-uppercase text-spacing-120 text-left text-bold">Leave a comment</h4>
+          <form class="offset-top-10 text-left">
+              <div class="form-group">
+                <label class="form-label form-label-outside rd-input-label" for="message-text">Message:</label>
+                <textarea class="form-control form-control-has-validation form-control-last-child" id="message-text" data-constraints="@Required"></textarea><span class="form-validation"></span>
+              </div>
+              <div class="group-sm text-left offset-top-30">
+                <button id="btn-send-message" class="btn btn-sm btn-primary" type="button">comment</button>
+                {{ if .Data.ProfileType == "b"}}
+                  <button class="btn btn-sm btn-primary pull-right" type="button" data-toggle="modal" data-target="#quick-payment-modal">pay this profile</button>
+                {{ else if .Data.ProfileType == "p" || .Data.ProfileType == "s"}}
+                  <button class="btn btn-sm btn-primary pull-right" type="button" data-toggle="modal" data-target="#quick-payment-request-modal">request payment</button>
+                {{ end }}
+              </div>
+          </form>
+          <input type="hidden" id="room-uuid" value="{{.Data.RoomUUID}}" />
+          <input type="hidden" id="profile-id" value="{{.Data.currentUserProfileID}}" />          
+					<input type="hidden" value="{{.Data.UserID}}" id="quick-payment-user-id"/>          
+          <input type="hidden" value="{{.Data.Profile.ProfileID}}" id="quick-payment-profile-id"/>
+          <div class="modal modal-custom fade" id="quick-payment-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			      <div class="modal-dialog">
+              <div class="modal-content">
+
+                <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                <h2>Quick Payment</h2>
+                </div>
+                <div class="modal-body">
+                  <form id="quick-payment-form" data-form-output="form-output-global" method="post" action="" class="quick-payment-form text-left">
+                    <div class="form-group" class="form-label rd-input-label">              
+                      <label for="quick-payment-message" class="form-label">Message</label>
+                      <textarea id="quick-payment-message" class="form-control"  rows="3"  required=""></textarea> 
+                    </div> 
+
+                    <div class="form-group offset-top-20">        
+                              <label for="quick-payment-amount" class="form-label rd-input-label">Amount</label>
+                      <input id="quick-payment-amount" type="text"  class="form-control" data-constraints='@Required(label="Fee")'/>
+                    </div>
+
+                    <div class="offset-top-30">
+                      <div class="row">
+                        <div class="pull-left">
+                          <button type="button" id="quick-payment-paypal" class="btn btn-primary btn-block">Pay With Paypal</button>
+                        </div>
+                        <div class="pull-right">
+                          <button type="button" id="quick-payment-credit-card" class="btn btn-primary btn-block">Pay With Credit Card</button>
+                        </div>													
+                        <div role="alert" class="alert alert-success" style="display: none">
+												  <p class="offset-top-0">Payment successful</p>
+											  </div>
+                        <div role="alert" class="alert alert-danger" style="display: none">
+                          <p class="offset-top-0">Error making payment. Please try again later.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal modal-custom fade" id="quick-payment-request-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			      <div class="modal-dialog">
+              <div class="modal-content">
+
+                <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                <h2>Quick Payment Request</h2>
+                </div>
+                <div class="modal-body">
+                  <form id="quick-payment-request-form" data-form-output="form-output-global" method="post" action="" class="quick-payment-form text-left">
+                    <div class="form-group" class="form-label rd-input-label">              
+                      <label for="quick-payment-request-message" class="form-label">Message</label>
+                      <textarea id="quick-payment-request-message" class="form-control"  rows="3"  required=""></textarea> 
+                    </div> 
+
+                    <div class="form-group offset-top-20">        
+                              <label for="quick-payment-request-amount" class="form-label rd-input-label">Amount</label>
+                      <input id="quick-payment-request-amount" type="text"  class="form-control" data-constraints='@Required(label="Fee")'/>
+                    </div>
+
+                    <div class="offset-top-30">                                           
+                        <button type="button" id="quick-payment-request" class="btn btn-primary btn-block">request payment</button>                                              												                                          
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+{{ end }}
+

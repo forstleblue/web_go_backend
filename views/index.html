@@ -1,0 +1,437 @@
+{{ extends "layout-home.html" }}
+
+
+{{ block BodyHeaderIncludes() }}
+      <script>
+        
+      </script>
+      {{if .IsLoggedIn==false }}
+      <div class="page-loader page-loader-variant-1">
+        <div><img class='img-responsive' style='margin-top: -20px;margin-left: -5px;' width='300' height='263' src='/images/logo-big.png' alt=''/>
+          <div class="offset-top-41 text-center">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+     
+{{ end }}
+
+{{ block Body() }}
+      <main class="page-content">
+        <!-- Build Your Future-->
+        <section>
+          <!-- RD Parallax-->
+          <div data-on="false" data-md-on="true" class="rd-parallax">
+            <div data-speed="0.35" data-type="media" data-url="images/background-01-1920x870.png" class="rd-parallax-layer"></div>
+            <div data-speed="0" data-type="html" class="rd-parallax-layer">
+              <div class="bg-overlay-gray-darkest">
+                <div class="shell section-98 section-sm-254">
+                  <div class="range range-xs-center">
+                    <div class="cell-xs-12">
+                      <div class="text-extra-big text-white">Empower Connections</div>
+                      <h4 class="text-white offset-top-20 offset-sm-top-41">Find the most <span class="text-primary">trusted</span> people right now!</h4>
+
+                      <form class="offset-top-10 offset-sm-top-30" action="/find-person">
+                        <div class="group-sm group-top">                          
+                          <div style="max-width: 400px;" class="group-item element-fullwidth">
+                            <div class="form-group">
+
+                              <select id="form-search-job-cat" type="text" name="job" class="form-control" multiple="multiple"
+                                      data-placeholder="Job title, skill, or profession" data-delay="250" data-allow-clear="true"
+                                      data-tags="true" data-minimum-results-for-search="Infinity">
+                                      
+                                      {{ range element := .Data.serviceTypes }} 
+                                        <optgroup label={{element.Text}}>
+                                          
+                                           {{range category := element.Children}}
+                                            <option value="{{category.Id}}">{{category.Name}}</option>
+                                           {{end}}
+                                        </optgroup>  
+                                        
+                                      {{ end }}
+                                      
+                                     
+                              </select>
+                            </div>
+                          </div>
+                          <div style="max-width: 400px;" class="group-item element-fullwidth">
+                            <div class="form-group">
+                              <label for="form-filter-location" class="form-label rd-input-label">Suburb and State</label>
+                              <input id="form-filter-location" type="text" name="loc" autocomplete="off" class="form-control" placeholder="" onFocus="geolocate()">
+                            </div>
+                            <div id="divAddress" style="display: none; padding: 10px;background-color: #ff531f;border-radius: 5px;width: 480px;">
+                              <table style="text-align: left;">
+                                <tbody>
+                                <tr>
+                                  <td class="label">Street address</td>
+                                  <td style="width: 70px;padding: 0 3px 3px 0;">
+                                    <input id="street_number" disabled="true" style="width: 70px;"></td>
+                                  <td colspan="2" style="width: 140px; padding: 0 0 3px 0;">
+                                    <input id="route" disabled="true" style="width:99%;"></td>
+                                </tr>
+                                <tr>
+                                  <td class="label">City</td>
+                                  <td colspan="3"><input id="locality" name="city" disabled="true" style="width:99%;margin: 0 0 3px;"></td>
+                                </tr>
+                                <tr>
+                                  <td class="label">State</td>
+                                  <td><input id="administrative_area_level_1" name="state" disabled="true" style="width:99%;margin: 0 0 3px;"></td>
+                                  <td class="label">Zip code</td>
+                                  <td><input id="postal_code" disabled="true" name="postcode" style="width:99%;margin: 0 0 3px;"></td>
+                                </tr>
+                                <tr>
+                                  <td class="label">Country</td>
+                                  <td colspan="3"><input id="country" name="country" disabled="true" style="width:99%"></td>
+                                </tr>
+                              </tbody></table>
+                            </div>
+                        </div>
+                        <div class="reveal-block reveal-lg-inline-block">
+                          <button type="submit" style="max-width: 170px; min-width: 170px; min-height: 50px;" class="btn btn-primary element-fullwidth">Find</button>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--<h4 class="text-white" style="padding-bottom:80px">...or browse by category:</h4>-->
+            </div>
+          </div>
+        </section>
+
+        <!-- Why People Choose Us-->
+        <section class="section-98 section-sm-110 bg-gray-light">
+          <div class="shell">
+            <h1>Why People Choose Us</h1>
+            <hr class="divider divider-sm bg-darkers">
+            <div class="range range-xs-center text-md-left offset-top-50 offset-lg-top-66">
+              <div class="cell-sm-9 cell-md-4 cell-md-preffix-0">
+                <!-- Icon Box Type 3-->
+                <div class="unit unit-middle unit-spacing-xs unit-xs unit-xs-horizontal text-center text-xs-left">
+                  <div class="unit-left"><span class="icon text-middle icon-sm text-primary mdi mdi-account-check"></span></div>
+                  <div class="unit-body">
+                    <h6 class="text-uppercase text-bold">Your reputation is Universal</h6>
+                  </div>
+                </div>
+                <p class="offset-top-10 text-dark text-center text-xs-left">Most people have accounts on various websites, like eBay and Uber with varying feedback and reputation mechanisms. Wouldn't it be nice if you could combine them all into one solid "Universal Reputation"?</p>
+              </div>
+              <div class="cell-sm-9 cell-md-4 cell-md-preffix-0 offset-top-50 offset-md-top-0">
+                <!-- Icon Box Type 3-->
+                <div class="unit unit-middle unit-spacing-xs unit-xs unit-xs-horizontal text-center text-xs-left">
+                  <div class="unit-left"><span class="icon text-middle icon-sm text-primary mdi mdi-chart-bar"></span></div>
+                  <div class="unit-body">
+                    <h6 class="text-uppercase text-bold">Your reputation is Portable</h6>
+                  </div>
+                </div>
+                <p class="offset-top-10 text-dark text-center text-xs-left">On other websites like eBay, your reputation is only valid on that one website. What you want is one reputation that is valid everywhere. That's where we come in...</p>
+              </div>
+              <div class="cell-sm-9 cell-md-4 cell-md-preffix-0 offset-top-50 offset-md-top-0">
+                <!-- Icon Box Type 3-->
+                <div class="unit unit-middle unit-spacing-xs unit-xs unit-xs-horizontal text-center text-xs-left">
+                  <div class="unit-left"><span class="icon text-middle icon-sm text-primary mdi mdi-newspaper"></span></div>
+                  <div class="unit-body">
+                    <h6 class="text-uppercase text-bold">Your reputation is Safe</h6>
+                  </div>
+                </div>
+                <p class="offset-top-10 text-dark text-center text-xs-left">What happens to your reputation on another site if that site shuts down? You lose it all without any recourse. Universal Reputations aims to ALWAYS protect your reputation, so you can rest assured your reputation is safe and secure.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Start Building Your Own Job Board Now-->
+        <section class="context-dark">
+          <!-- RD Parallax-->
+          <div data-on="false" data-md-on="true" class="rd-parallax">
+            <div data-speed="0.35" data-type="media" data-url="images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+            <div data-speed="0" data-type="html" class="rd-parallax-layer">
+              <div class="bg-overlay-gray-darkest">
+                <div class="shell section-98">
+                  <div class="range range-xs-middle range-condensed">
+                    <div class="cell-md-8 cell-lg-10 text-center text-md-left">
+                      <h2>Start Building Your Permanent Reputation Now</h2>
+                    </div>
+                    <div class="cell-md-4 cell-lg-2 offset-top-41 offset-md-top-0"><a href="/login-register" style="max-width:195px;" class="btn btn-primary btn-block center-block">get started</a></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Testimonials-->
+        <section class="section-98 section-sm-110">
+          <div class="shell">
+            <h1>Testimonials</h1>
+            <hr class="divider divider-sm bg-darkers">
+            <div data-items="1" data-nav="true" data-dots="true" data-nav-class="[&quot;owl-prev mdi mdi-chevron-left&quot;, &quot;owl-next mdi mdi-chevron-right&quot;]" class="owl-carousel owl-carousel-default owl-carousel-arrows veil-md-owl-dots veil-owl-nav reveal-md-owl-nav inset-left-7p inset-right-7p">
+              <div>
+                <div class="range range-xs-center">
+                  <div class="cell-lg-8">
+                    <div class="reveal-inline-block">
+                      <div class="unit unit-xs unit-xs-horizontal unit-spacing-sm text-xs-left">
+                        <div class="unit-left"><img width="60" height="60" src="/images/profile-photos/8/bb548aba-b96c-4ec7-87e6-b5f9ebcce282-user-samantha-roberts-270x270.jpg" alt="Samantha Roberts" class="img-circle"/></div>
+                        <div class="unit-body">
+                          <div>
+                            <div class="h5 text-primary">Samantha Roberts</div>
+                          </div>
+                          <div>
+                            <div class="p text-dark">Babysitter</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="offset-top-41">
+                      <!-- Quote Simple-->
+                      <hr class="hr hr-gradient"/>
+                      <div class="h4 text-center text-regular text-italic">
+                        <q>Thank you for the assistance you provided in my baby sitting. 
+                          During a short period of using your website I have found several families 
+                          who are pleased with my service. My Universal Reputation is already proving 
+                          to be very valuable!</q>
+                      </div>
+                      <hr class="hr hr-gradient"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="range range-xs-center">
+                  <div class="cell-lg-8">
+                    <div class="reveal-inline-block">
+                      <div class="unit unit-xs unit-xs-horizontal unit-spacing-sm text-xs-left">
+                        <div class="unit-left"><img width="60" height="60" src="/images/profile-photos/7/c71eb6f7-1ff9-45f7-ac25-60ff3976ebf5-user-russell-myers-270x270.jpg" alt="Russell Myers" class="img-circle"/></div>
+                        <div class="unit-body">
+                          <div>
+                            <div class="h5 text-primary">Russell Myers</div>
+                          </div>
+                          <div>
+                            <div class="p text-dark">Tax Accountant</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="offset-top-41">
+                      <!-- Quote Simple-->
+                      <hr class="hr hr-gradient"/>
+                      <div class="h4 text-center text-regular text-italic">
+                        <q>I just want to thank you for the wonderful service you provide the community. 
+                            I am so pleased and grateful. The world needed this! 
+                            Your site also provides the best support I have ever encountered.</q>
+                      </div>
+                      <hr class="hr hr-gradient"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="range range-xs-center">
+                  <div class="cell-lg-8">
+                    <div class="reveal-inline-block">
+                      <div class="unit unit-xs unit-xs-horizontal unit-spacing-sm text-xs-left">
+                        <div class="unit-left"><img width="60" height="60" src="images/profile-photos/5/4e9de917-837f-44c1-aa60-40d6a043ad6a-user-julian-dickons-270x270.jpg" alt="Julian Dickons" class="img-circle"/></div>
+                        <div class="unit-body">
+                          <div>
+                            <div class="h5 text-primary">Julian Dickons</div>
+                          </div>
+                          <div>
+                            <div class="p text-dark">Gardener</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="offset-top-41">
+                      <!-- Quote Simple-->
+                      <hr class="hr hr-gradient"/>
+                      <div class="h4 text-center text-regular text-italic">
+                        <q>Thank you very much for your service. 
+                          I have no doubt that the work you people do is very important! 
+                          I have experienced growth in my business purely through recommendations on your website. 
+                          I love the automated client payments too!</q>
+                      </div>
+                      <hr class="hr hr-gradient"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Latest Blog Posts-->
+        <section class="section-98 section-sm-110 bg-gray-light">
+          <div class="shell">
+            <h1>Latest Blog Posts</h1>
+            <hr class="divider divider-sm bg-darkers">
+            <div class="range range-xs-center">
+              <div class="cell-sm-9 cell-md-6">
+                <!-- Post Modern-->
+                <article class="post post-modern">
+                  <!-- Post media-->
+                  <header class="post-media">
+                    <div class="embed-responsive embed-responsive-16by9">
+                      <iframe width="560" height="315" src="https://www.youtube.com/embed/UOP89L3g_48" frameborder="0" allowfullscreen class="embed-responsive-item"></iframe>
+                    </div>
+                  </header>
+                  <!-- Post content-->
+                  <section class="post-content text-left">
+                    <div class="post-meta small pull-sm-right"><span class="text-middle icon-xxs mdi mdi-clock text-primary"></span>
+                      <time datetime="2016-01-01" class="text-italic text-middle text-dark">2 days ago</time>
+                    </div>
+                    <ul class="list-inline offset-top-14 offset-sm-top-0">
+                      <li class="text-middle">
+                        <div class="post-tags group-xs"><a href="#" class="label-custom label-lg-custom label-rounded-custom label-primary">Business</a>
+                        </div>
+                      </li>
+                      <li class="text-middle">
+                        <div class="icon icon-xxs text-dark mdi mdi-video"></div>
+                      </li>
+                    </ul>
+                    <!-- Post Title-->
+                    <div class="post-title">
+                      <h6 class="offset-top-24"><a href="blog.html">10 tips to improve your online reputation</a></h6>
+                    </div>
+                    <!-- Post Body-->
+                    <div class="post-body offset-top-20">
+                      <p>Nowadays both individuals and companies are looking for ways to improve their online reputation. Don Sorensen, president of Big Blue Robot, a well-respected reputation management authority, discusses 10 important ways to help improve your online reputation.</p>
+                    </div>
+                  </section>
+                </article>
+                <div class="offset-top-30">
+                  <!-- Post Modern-->
+                  <article class="post post-modern">
+                    <!-- Post media-->
+                    <header class="post-media"><img width="570" height="321" src="images/home-01-570x321.jpg" alt="" class="img-responsive img-cover"/>
+                    </header>
+                    <!-- Post content-->
+                    <section class="post-content text-left">
+                      <div class="post-meta small pull-sm-right"><span class="text-middle icon-xxs mdi mdi-clock text-primary"></span>
+                        <time datetime="2016-01-01" class="text-italic text-middle text-dark">7 days ago</time>
+                      </div>
+                      <ul class="list-inline offset-top-14 offset-sm-top-0">
+                        <li class="text-middle">
+                          <div class="post-tags group-xs"><a href="#" class="label-custom label-lg-custom label-rounded-custom label-primary">Lifestyle</a>
+                          </div>
+                        </li>
+                        <li class="text-middle">
+                          <div class="icon icon-xxs text-dark mdi mdi-instagram"></div>
+                        </li>
+                      </ul>
+                      <!-- Post Title-->
+                      <div class="post-title">
+                        <h6 class="offset-top-24"><a href="blog.html">Why your Universal Reputation can lead to a better life.</a></h6>
+                      </div>
+                      <!-- Post Body-->
+                      <div class="post-body offset-top-20">
+                      </div>
+                    </section>
+                  </article>
+                </div>
+              </div>
+              <div class="cell-sm-9 cell-md-6 offset-top-30 offset-md-top-0">
+                <!-- Post Modern-->
+                <article class="post post-modern">
+                  <!-- Post media-->
+                  <!-- Post content-->
+                  <section class="post-content text-left">
+                    <div class="post-meta small pull-sm-right"><span class="text-middle icon-xxs mdi mdi-clock text-primary"></span>
+                      <time datetime="2016-01-01" class="text-italic text-middle text-dark">3 days ago</time>
+                    </div>
+                    <ul class="list-inline offset-top-14 offset-sm-top-0">
+                      <li class="text-middle">
+                        <div class="post-tags group-xs"><a href="#" class="label-custom label-lg-custom label-rounded-custom label-primary">News</a>
+                        </div>
+                      </li>
+                      <li class="text-middle">
+                        <div class="icon icon-xxs text-dark mdi mdi-pen"></div>
+                      </li>
+                    </ul>
+                    <!-- Post Title-->
+                    <div class="post-title">
+                      <h6 class="offset-top-24"><a href="blog.html">Top 50 international companies to consider your reputation.</a></h6>
+                    </div>
+                    <!-- Post Body-->
+                    <div class="post-body offset-top-20">
+                      <p>There are thousands of possibilities that can help you find the job of your dream. But how many of them will really lead you to the success of working at the well-known international company? Let’s find it out.</p>
+                    </div>
+                  </section>
+                </article>
+                <div class="offset-top-30">
+                  <!-- Post Modern-->
+                  <article class="post post-modern">
+                    <!-- Post media-->
+                    <header class="post-media">
+                      <div class="post-inset">
+                        <div class="soundcloud-player-classic"><iframe height="166" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/149065581&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe></div>
+                      </div>
+                    </header>
+                    <!-- Post content-->
+                    <section class="post-content text-left">
+                      <div class="post-meta small pull-sm-right"><span class="text-middle icon-xxs mdi mdi-clock text-primary"></span>
+                        <time datetime="2016-01-01" class="text-italic text-middle text-dark">5 days ago</time>
+                      </div>
+                      <ul class="list-inline offset-top-14 offset-sm-top-0">
+                        <li class="text-middle">
+                          <div class="post-tags group-xs"><a href="#" class="label-custom label-lg-custom label-rounded-custom label-primary">Audio</a>
+                          </div>
+                        </li>
+                        <li class="text-middle">
+                          <div class="icon icon-xxs text-dark mdi mdi-soundcloud"></div>
+                        </li>
+                      </ul>
+                      <!-- Post Title-->
+                      <div class="post-title">
+                        <h6 class="offset-top-24"><a href="blog.html">Roland's weekly audio blog: How to improve your UR profile and get noticed.</a></h6>
+                      </div>
+                      <!-- Post Body-->
+                      <div class="post-body offset-top-20">
+                      </div>
+                    </section>
+                  </article>
+                </div>
+                <div class="offset-top-30">
+                  <!-- Post Modern-->
+                  <article class="post post-modern">
+                    <!-- Post media-->
+                    <header class="post-media"><img width="571" height="321" src="images/home-02-570x321.jpg" alt="" class="img-responsive img-cover"/>
+                    </header>
+                    <!-- Post content-->
+                    <section class="post-content text-left">
+                      <div class="post-meta small pull-sm-right"><span class="text-middle icon-xxs mdi mdi-clock text-primary"></span>
+                        <time datetime="2016-01-01" class="text-italic text-middle text-dark">2 days ago</time>
+                      </div>
+                      <ul class="list-inline offset-top-14 offset-sm-top-0">
+                        <li class="text-middle">
+                          <div class="post-tags group-xs"><a href="#" class="label-custom label-lg-custom label-rounded-custom label-primary">Business</a>
+                          </div>
+                        </li>
+                        <li class="text-middle">
+                          <div class="icon icon-xxs text-dark mdi mdi-image"></div>
+                        </li>
+                      </ul>
+                      <!-- Post Title-->
+                      <div class="post-title">
+                        <h6 class="offset-top-24"><a href="blog.html">'Trust' as a vital element of your own success and career promotion.</a></h6>
+                      </div>
+                      <!-- Post Body-->
+                      <div class="post-body offset-top-20">
+                        <p>It is widely known that trust is very important to successful completion of any idea. Nevertheless, some projects based on the principle of trusted cooperation often lack some simple but effective features.</p>
+                      </div>
+                    </section>
+                  </article>
+                </div>
+              </div>
+              <div class="range range-xs-center offset-top-66">
+                <div class="cell-xs-7 cell-sm-5 cell-md-4 cell-lg-3">
+                  <div class="inset-lg-left-20 inset-lg-right-20"><a href="blog.html" class="btn btn-primary reveal-xs-block">view all blog posts</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+{{ end }}
+
+
+{{ block BodyFooterIncludes() }}
+  <script src="https://maps.googleapis.com/maps/api/js?key={{.GoogleAPIKey}}&libraries=places&callback=initAutocomplete" async defer></script>
+{{ end }}  

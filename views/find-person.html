@@ -1,0 +1,193 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block">Find a Person</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }}
+
+{{ block BodyHeaderIncludes() }}
+      <script>    
+        // var jobCats = 
+        //   [
+        //     {
+        //       text: 'Care/Help:', children: [{id: 'Babysitter',text: 'Babysitter'},{id: 'Nanny',text: 'Nanny'}, {id: 'Caretaker',text: 'Caretaker'}]
+        //     },
+        //     {
+        //       text: 'Drive/Deliver:', children: [{id: 'Driver',text: 'Driver'},{id: 'Delivery man',text: 'Delivery man'},{id: 'Removalist',text: 'Removalist'}]
+        //     },
+        //     {
+        //       text: 'Maintain/Repair:', children: [,{id: 'Electrician',text: 'Electrician'}, ,{id: 'Gardener',text: 'Gardener'}, {id: 'Handy man',text: 'Handy man'},{id: 'Lawn mower',text: 'Lawn mower'},{id: 'Plumber',text: 'Plumber'}]
+        //     },
+        //     {
+        //       text: 'Cook/Clean:', children: [{id: 'Home cleaner',text: 'Home cleaner'},{id: 'Office cleaner',text: 'Office cleaner'},{id: 'Cook',text: 'Cook'},{id: 'Laundry/Ironing',text: 'Laundry/Ironing'}]
+        //     },
+        //     {
+        //       text: 'Other:', children: [{id: 'Other',text: 'Other'}]
+        //     },
+        //   ];      
+      </script>
+{{ end }}
+
+{{ block BodyFooterIncludes() }}
+  <script src="https://maps.googleapis.com/maps/api/js?key={{.GoogleAPIKey}}&libraries=places&callback=initAutocomplete" async defer></script>
+  <script>
+  $(document).ready(function(){          
+    $('.starscore').rating({displayOnly: true, 				  
+      showCaption: true,
+    });    
+  });  
+  </script> 
+{{ end }}  
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">
+
+<!-- Search Engine-->
+<section class="section-top-34 section-bottom-66 bg-primary">
+  <div class="shell">
+    <form class="offset-top-10 offset-sm-top-30" action="/find-person">
+      <div class="group-sm group-top">                          
+        <div style="max-width: 400px;" class="group-item element-fullwidth">
+          <div class="form-group">
+            <select id="form-search-job-cat" type="text" name="job" class="form-control" multiple="multiple"
+                    data-placeholder="Job title, skill, or profession" data-delay="250" data-allow-clear="true"
+                    data-tags="true" data-minimum-results-for-search="Infinity">
+                    {{ range element := .Data.serviceTypes }} 
+                        <optgroup label={{element.Text}}>                                  
+                            {{range category := element.Children}}
+                            <option value="{{category.Id}}">{{category.Name}}</option>
+                            {{end}}
+                        </optgroup>  
+                    {{ end }}
+            </select>
+          </div>
+        </div>
+        <div style="max-width: 400px;" class="group-item element-fullwidth">
+          <div class="form-group">
+            <label for="form-filter-location" class="form-label rd-input-label">Suburb and State</label>
+            <input id="form-filter-location" type="text" name="loc" autocomplete="off" class="form-control" placeholder="" onFocus="geolocate()" value="">
+          </div>
+          <div id="divAddress" style="display: none; padding: 10px;background-color: #ff531f;border-radius: 5px;width: 480px;">
+            <table style="text-align: left;">
+              <tbody>
+              <tr>
+                <td class="label">Street address</td>
+                <td style="width: 70px;padding: 0 3px 3px 0;">
+                  <input id="street_number" disabled="true" style="width: 70px;"></td>
+                <td colspan="2" style="width: 140px; padding: 0 0 3px 0;">
+                  <input id="route" disabled="true" style="width:99%;"></td>
+              </tr>
+              <tr>
+                <td class="label">City</td>
+                <td colspan="3"><input id="locality" name="city" disabled="true" style="width:99%;margin: 0 0 3px;"></td>
+              </tr>
+              <tr>
+                <td class="label">State</td>
+                <td><input id="administrative_area_level_1" name="state" disabled="true" style="width:99%;margin: 0 0 3px;"></td>
+                <td class="label">Zip code</td>
+                <td><input id="postal_code" disabled="true" name="postcode" style="width:99%;margin: 0 0 3px;"></td>
+              </tr>
+              <tr>
+                <td class="label">Country</td>
+                <td colspan="3"><input id="country" name="country" disabled="true" style="width:99%"></td>
+              </tr>
+            </tbody></table>
+          </div>
+      </div>
+      <div class="reveal-block reveal-lg-inline-block">
+        <button type="submit" style="max-width: 170px; min-width: 170px; min-height: 50px;" class="btn btn-primary element-fullwidth">Find</button>
+      </div>
+    </form>
+
+  </div>
+</section>
+
+<!-- Profiles-->
+<section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+  <div class="shell">
+    <h1>{{.Data.Heading}}</h1>
+    <div class="range range-sm-left range-xs-center">
+    
+      {{ if len(.Data.Profiles) == 0 }}
+        <h3>There are no matching results</h3>
+      {{ end }}
+      
+      {{range index, profile := .Data.Profiles}}
+      {{feedbackAverage := .Data.FeedbackAverages[index]}}
+      {{ include "/partials/_profile_card.html" }}
+      {{ end }}
+    </div>
+  </div>
+</section>
+
+{{ if len(.Data.Job)}}
+<!-- Latest Jobs-->
+<section class="section-98 section-sm-110">
+  <div class="shell">
+    <h1>Latest Postings</h1>
+    <hr class="divider divider-sm bg-darkers">
+    <!-- Bootstrap Table-->
+    <div class="table-responsive clearfix">
+      <table class="table table-striped">
+        <tr>
+          <th class="text-regular text-dark big text-center">Provider</th>
+          <th class="text-regular text-dark big">Service</th>
+          <th class="text-regular text-dark big">Reputation</th>
+          <th class="text-regular text-dark big">Recent Activity</th>
+          <th class="text-regular text-dark big">Date</th>
+          <th class="text-regular text-dark big">Location</th>
+          <th class="text-regular text-dark big">Fee</th>
+        </tr>
+        {{range index, profile := .Data.LatestProfiles}}
+        <tr>
+          <td>
+              <div class="text-left">
+                <div class="text-primary p text-center">
+                  <a href="profile/{{profile.ProfileUUID}}"><img width="60" height="60" src="{{profile.DisplayPhoto()}}" alt="{{profile.User.FirstName}} {{profile.User.LastName}} - {{profile.Skill}}" class="img-circle img-semi-transparent-inverse"></a>
+                  <a href="profile/{{profile.ProfileUUID}}" class="text-regular text-nowrap clearfix">{{profile.User.FirstName}} {{profile.User.LastName}}</a>
+                </div>
+              </div>
+          </td>
+          <td class="text-primary p"><a href="service/{{profile.Skill}}">{{profile.Skill}}</a></td>
+          <td> <span class="text-middle icon-xxs mdi mdi-star text-nowrap ur-gold-transparent">UR GOLD</span></td>
+          <td class="text-middle small">
+
+            <span class="text-nowrap">
+              <span class="icon-xxs mdi mdi-heart text-danger" data-toggle="tooltip" title="142 likes"></span>
+              <span></span>
+              <span class="text-regular small">142</span>
+            </span>
+            <span class="text-nowrap">
+              <span class="icon-xxs mdi mdi-share text-danger"  data-toggle="tooltip" title="87 recommendations"></span>
+              <span></span>
+              <span class="text-regular small">87</span>
+            </span>
+
+          </td>
+          <td>{{profile.CreateDateFormatted()}}</td>
+          <td class="primary-bg">Dee Why, NSW</td>
+          <td>{{profile.Fee}}</td>
+        </tr>
+        {{ end }}
+      </table>
+    </div>
+    <div class="range range-xs-center offset-top-66">
+      <div class="cell-xs-5 cell-sm-3 cell-md-3 cell-lg-2"><a href="#" class="btn btn-primary reveal-xs-block">view all</a></div>
+    </div>
+  </div>
+</section>
+{{ end }}
+
+</main>
+{{ end }}

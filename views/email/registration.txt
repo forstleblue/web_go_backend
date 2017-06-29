@@ -1,0 +1,14 @@
+Welcome to UR-local
+
+Hi {{User.FirstName}},
+
+Thank you for signing up with UR-local. Marketing text about how we will now help you with your online profile, blah, blah
+
+Maybe some information on what you can do, click to login to dashboard, etc.
+
+Link to support for more questions? Links to top questions?
+
+Maybe see SquareUp welcome email, as it is pretty good.
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+{{DashboardURL}}

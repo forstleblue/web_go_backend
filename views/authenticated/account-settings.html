@@ -1,0 +1,280 @@
+{{ extends "layout-authenticated.html" }} 
+
+{{ block BodyAuth() }}
+            <div class="range range-xs-center offset-top-41">
+              <div class="cell-sm-12 text-left">
+				<!-- Responsive-tabs-->
+				<div id="s" data-type="horizontal" class="responsive-tabs responsive-tabs-classic">
+					<ul data-group="tabs-group-default" class="resp-tabs-list tabs-1 text-center tabs-group-default">
+						<li>User Details</li>
+						<li>Change Password</li>
+						<li>Connected Accounts</li>
+					</ul>
+					<div data-group="tabs-group-default" class="resp-tabs-container text-left tabs-group-default">
+                        <div class="row">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-10">
+                                    <form id="user-form" data-form-output="form-output-global" method="post" action="/save-account" class="account-form text-left">
+                                        <div class="range">
+                                            <div role="alert" class="alert alert-danger">
+                                                <p class="offset-top-0">Error! Check the form and try submitting again.</p>
+                                            </div>
+                                            <div class="cell-lg-12 offset-top-30 offset-md-top-0 text-center">
+                                                {{if .Data.User.PhotoURL == "" }}
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div id="uploader"></div>
+                                                    </div>
+                                                    {{ if .Data.User.HasFacebook() }}
+                                                    <div class="col-md-6">
+                                                        <img class="profile" src="{{ .User.FacebookPhotoURL() }}" alt='user photo'/> 
+                                                        <a id="choose-facebook" class="btn btn-success" aria-label="Use" data-facebook-photo="{{ .User.FacebookPhotoURL() }}">
+                                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                    {{ end }}
+                                                </div>
+                                                {{else}}
+                                                <div id="uploader-wrapper" class="row hide">
+                                                    <div class="col-md-6">
+                                                        <div id="uploader"></div>
+                                                    </div>
+                                                    {{ if .Data.User.HasFacebook() }}
+                                                    <div class="col-md-6">
+                                                        <img class="profile" src="{{ .User.FacebookPhotoURL() }}" alt='user photo'/> 
+                                                        <a id="choose-facebook" class="btn btn-success" aria-label="Use" data-facebook-photo="{{ .User.FacebookPhotoURL() }}">
+                                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                    {{ end }}
+                                                </div>
+                                                    <div class="photo-wrapper">
+                                                        <img width="200px" src="{{.Data.User.DisplayPhoto()}}" />
+                                                        <a id="photo-delete" class="btn btn-danger" aria-label="Delete">
+                                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                {{end}}
+                                            </div>
+                                            <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                                            <div class="form-group">
+                                                <label for="fname" class="form-label rd-input-label">First name</label>
+                                                <input id="fname" type="text" name="fname" value="{{ .Data.User.FirstName }}" class="form-control" data-constraints='@Required(label="First name")'>
+                                            </div>
+                                            </div>
+                                            <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                                            <div class="form-group">
+                                                <label for="lname" class="form-label rd-input-label">Last name</label>
+                                                <input id="lname" type="text" name="lname" value="{{ .Data.User.LastName }}" class="form-control" data-constraints='@Required(label="Last name")'>
+                                            </div>
+                                            </div>
+                                            <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                                            <div class="form-group">
+                                                <label for="email" class="form-label rd-input-label">Email</label>
+                                                <input id="email" type="email" name="email" value="{{ .Data.User.Email }}" class="form-control" data-constraints='@Required(label="Email") @Email(label="Email")'>
+                                            </div>
+                                            </div>
+                                            <div class="cell-md-6 offset-top-30 offset-md-top-20">
+                                            <div class="form-group">
+                                                <label for="form-filter-location" class="form-label rd-input-label">Location</label>
+                                                <input id="form-filter-location" type="text" name="form-filter-location" value="{{.Data.User.FormattedAddress()}}" class="form-control" autocomplete="off" placeholder="" onFocus="geolocate()">
+                                                <input id="lat" type="hidden" name="lat" value="{{.Data.User.Lat}}" />
+                                                <input id="lng" type="hidden" name="lng" value="{{.Data.User.Lat}}"/>
+                                            </div>
+                                            <div id="divAddress" style="display: none; padding: 10px;background-color: #ff531f;border-radius: 5px;width: 480px;">
+                                                <table style="text-align: left;">
+                                                <tbody>
+                                                <tr>
+                                                    <td class="label">Street address</td>
+                                                    <td style="width: 70px;padding: 0 3px 3px 0;">
+                                                    <input id="street_number" value="{{.Data.User.Address}}" style="width: 70px;"></td>
+                                                    <td colspan="2" style="width: 140px; padding: 0 0 3px 0;">
+                                                    <input id="route" disabled="true" style="width:99%;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">City</td>
+                                                    <td colspan="3"><input id="locality" name="city" value="{{.Data.User.City}}" style="width:99%;margin: 0 0 3px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">State</td>
+                                                    <td><input id="administrative_area_level_1" name="state" value="{{.Data.User.Region}}" style="width:99%;margin: 0 0 3px;"></td>
+                                                    <td class="label">Zip code</td>
+                                                    <td><input id="postal_code" value="{{.Data.User.Postcode}}" name="postcode" style="width:99%;margin: 0 0 3px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">Country</td>
+                                                    <td colspan="3"><input id="country" name="country" value="{{.Data.User.Country}}" style="width:99%"></td>
+                                                </tr>
+                                                </tbody></table>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="group group-xl offset-top-30 text-center text-md-left">
+                                            <input id="id" type="hidden" name="id" value="{{ .Data.User.UserID }}" />
+                                            <input id="photoURL" type="hidden" name="photoURL" value="{{ .Data.User.PhotoURL }}" />
+                                            <button type="submit" class="btn btn-primary">Save</button> <a href="/dashboard" class="btn btn-default">Cancel</a>
+                                        </div>
+                                    </form>
+                            </div>
+                        </div>
+						<div>
+							<div class="range range-xs-center section-34">
+                                <p>["change password" form goes here]</p>
+							</div>
+						</div>
+						<div>
+                            <div class="row">
+                                <div class="col-lg-2"></div>
+                                    <div class="col-lg-10">
+                                        <p>Additional capabilitity here to either unlink or link Facebook and other social accounts</p>
+                                        <p><i class="icon fa fa-facebook icon-xxs icon-circle" style="margin-right: 5px;"></i> <span style="display: inline-block; width:60px; margin-right: 20px">Facebook</span>
+                                        {{ if .Data.User.HasFacebook() }}
+                                            <a href="javascript:toastr['info']('Unlinking Facebook account not yet implemented', 'Not yet implemented');" class="btn btn-danger btn-xs">Unlink</a>
+                                        {{ else }}
+                                            <a href="javascript:toastr['info']('Linking Facebook account not yet implemented', 'Not yet implemented');" class="btn btn-default btn-xs">Link</a>
+                                        {{ end }}
+                                        </p>
+                                        <p>
+                                            <i class="icon fa fa-paypal icon-xxs icon-circle" style="margin-right: 5px;"></i> <span style="display: inline-block; width:60px; margin-right: 20px">Paypal</span>
+                                            <a href="javascript:toastr['info']('Linking Paypal account not yet implemented', 'Not yet implemented');" class="btn btn-default btn-xs">Link</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+{{ end }}
+
+{{ block BodyFooterIncludes() }}
+<script src="https://maps.googleapis.com/maps/api/js?key={{.GoogleAPIKey}}&libraries=places&callback=initAutocomplete" async defer></script>
+
+<script type="text/template" id="qq-template">
+    <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="Drop photo here">
+        <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+            <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+        </div>
+        <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+            <span class="qq-upload-drop-area-text-selector"></span>
+        </div>
+        <div class="text-left">(300 X 300 pixel square images are best)</div>
+        <div class="qq-upload-button-selector qq-upload-button">
+            <div>Select a file</div>
+        </div>
+        <span class="qq-drop-processing-selector qq-drop-processing">
+            <span>Processing dropped file...</span>
+            <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+        </span>
+        <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+            <li>
+                <div class="qq-progress-bar-container-selector">
+                    <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                </div>
+                <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+                <span class="qq-upload-file-selector qq-upload-file"></span>
+                <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
+                <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                <span class="qq-upload-size-selector qq-upload-size"></span>
+                <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Cancel</button>
+                <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
+                <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
+                <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+            </li>
+        </ul>
+
+        <dialog class="qq-alert-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">Close</button>
+            </div>
+        </dialog>
+
+        <dialog class="qq-confirm-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">No</button>
+                <button type="button" class="qq-ok-button-selector">Yes</button>
+            </div>
+        </dialog>
+
+        <dialog class="qq-prompt-dialog-selector">
+            <div class="qq-dialog-message-selector"></div>
+            <input type="text">
+            <div class="qq-dialog-buttons">
+                <button type="button" class="qq-cancel-button-selector">Cancel</button>
+                <button type="button" class="qq-ok-button-selector">Ok</button>
+            </div>
+        </dialog>
+    </div>
+</script>
+<script>
+$(document).ready(function(e) {
+    var csrftoken = $('meta[name="csrf-token"]').attr('content');
+    var uploader = new qq.FineUploader({
+        element: document.getElementById("uploader"),
+        debug: true,
+        multiple: false,
+        request: {
+            endpoint: '/user/upload-photo',
+                params: {
+                    "csrftoken": csrftoken
+                }
+        }, validation: {
+            sizeLimit: 1024 * 1024 * 4
+        },
+        deleteFile: {
+            enabled: true, // defaults to false
+            endpoint: '/user/delete-photo'
+        },
+        retry: {
+            enableAuto: true
+        },
+        callbacks: {
+            onComplete: function(id, name, responseJSON) {
+                console.log(id);
+                console.log(name);
+                console.log(responseJSON);
+                $("#photoURL").val(responseJSON.filename);
+            },
+            onSubmitDelete: function(id) {
+                var name = this.getName(id);
+                console.log(name);
+                this.setDeleteFileParams({filename: name, csrftoken: $('meta[name="csrf-token"]').attr('content')}, id);
+            },
+            onDeleteComplete: function(id, xhr, isError) {
+                $("#photoURL").val("");
+            }
+        }
+    });
+
+    $("#uploader.hide").hide();
+
+    {{if .Data.Focus=="p" }}
+        $("#postcode").focus();
+    {{end}}
+
+    // stop form from submitting when pressing the enter key on the google places autocomplete
+    var input = document.getElementById('form-filter-location'); 
+    google.maps.event.addDomListener(input, 'keydown', function(e) { 
+            if (e.keyCode == 13) 
+            { 
+                    if (e.preventDefault) 
+                    { 
+                            e.preventDefault(); 
+                    } 
+                    else 
+                    { 
+                            // Since the google event handler framework does not handle early IE versions, we have to do it by our self. :-( 
+                            e.cancelBubble = true; 
+                            e.returnValue = false; 
+                    } 
+            } 
+    }); 
+
+});
+</script>
+{{ end }}
+

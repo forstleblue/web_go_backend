@@ -1,0 +1,83 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block">Feedback Detail</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }} 
+{{ block BodyFooterIncludes() }}
+<style>
+  /*.rating {
+    font-size: 20px;
+  }*/
+</style>
+<script>
+$(document).on('ready', function(){
+    $('#starscore').rating({displayOnly: true, step: 0.05});
+    $('.starscore').rating({displayOnly: true, 				  
+      showCaption: true,
+    });       		    	
+});
+</script>
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">  
+
+  <section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3">        
+
+        {{profile := .Data.Profile}}
+        {{feedbackAverage := profile.UniversalReputationScore()}}        
+        {{index := 0}}
+        {{ include "/partials/_profile_card.html"}}
+
+        </div>
+        <div class="col-sm-8">
+            {{ if .Data.FeedbackComplete == false }}
+                <p>Your feedback will be displayed here when both you and {{.Data.Profile.User.FirstName}} {{.Data.Profile.User.LastName}} have left feedback for each other.</p>
+            {{ else }}
+              <div class="row">
+                <div class="col-sm-4">
+                    <p><b>Description</b></p>
+                  <div class="offset-top-41">{{.Data.Feedback.Description}}</div>
+                </div>
+                <div class="col-sm-4">
+                  <p><b>Comment</b></p>
+                  <div class="offset-top-41">{{.Data.Feedback.Comment}}</div>
+                </div>
+                <div class="col-sm-4">
+                  <p><b>Score</b></p>
+
+                  <input class="starscore" name="starscore-1" value="{{.Data.Feedback.Score/20}}" class="rating-loading">
+
+                </div>
+              </div>
+              <div class="offset-top-30">                                      
+                <h1>Special Degree of Awesomeness</h1>
+                {{ range element := .Data.Feedback.SdaText }}
+                <p> {{element}} </p>
+                {{ end }}
+              </div>
+              
+            {{ end }}
+        </div>
+        
+
+      </div>
+    </div>
+  </section>
+</main>
+{{ end }}

@@ -1,0 +1,8 @@
+ALTER TABLE ONLY profiles
+    DROP COLUMN IF EXISTS title;
+
+ALTER TABLE ONLY profiles
+	DROP COLUMN IF EXISTS profile_type;
+
+ALTER TABLE ONLY profiles
+	DROP COLUMN IF EXISTS heading;

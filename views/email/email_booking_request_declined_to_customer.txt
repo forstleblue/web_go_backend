@@ -1,0 +1,20 @@
+Booking Request Unsuccessful
+
+Hi {{ReceiveUser.FullName()}},
+
+Sadly, {{SendUser.FirstName}} could not accept your booking request and declined-here the details:
+
+Service Provider:{{SendUser.FullName()}}
+Profile:{{ProfileServiceName}} 
+Booking ID:{{BookingID}}
+Date:{{Date}}
+Start Time:{{StartTime}}
+Duration: {{Duration}} hours
+Total Cost: AU${{Cost}}
+Comments:{{Comments}}
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+{{DashboardURL}}
+
+Regards,
+UR Local

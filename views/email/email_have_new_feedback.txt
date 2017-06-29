@@ -1,0 +1,23 @@
+You have New Feedback
+
+Hi {{ReceiveUser.FirstName}},
+
+{{SendUser.FirstName}} wrote you a review. Here are the details:
+
+Customer:{{SendUser.FullName()}}
+Your Profile:{{ProfileServiceName}}
+Booking ID:{{BookingID}}
+Date: {{Date}} 
+Start Time:{{StartTime}} 
+Duration: {{Duration}} hours 
+
+Rating
+Special Degrees of Awesomeness
+Comments
+
+Find out what {{SendUser.FirstName}} wrote about you. You can read {{SendUser.FirstName}}’s review once you write a review of your own for this transaction, or at the end of the feedback period on  <TransactionDate + 14 days>
+
+{{DashboardURL}}
+
+Regards,
+UR Local

@@ -1,0 +1,239 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block">Payment Request</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }}
+{{ block BodyFooterIncludes() }}
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('.date-picker').datetimepicker({
+      format: 'DD/MM/YYYY'
+    });
+    $('.time-picker').datetimepicker({
+      format: 'LT'
+    });
+    $("#date-picker3").on("dp.change", function(e) {    
+      var time = moment(e.date).add(1, 'hour');    
+      $('#date-picker4').data("DateTimePicker").date(time);
+      $('#date-picker4 .form-label').focus();
+    });    
+  });
+  $('.starscore').rating({displayOnly: true, 				  
+    showCaption: true,    
+  });
+  $("#btn-booking-request-message").click(function() {
+    var message = $('input[name="message"]:hidden');
+    message.val('YES');  
+  });
+  $("#btn-booking-request").click(function() {
+    var message = $('input[name="message"]:hidden');
+    message.val('NO');  
+  });
+  $(".btn-cancel-booking").click(function(){
+    var cancel = $('input[name="cancel-booking"]:hidden');
+    cancel.val('YES');
+    $("#booking-reject").text("Cancel");  
+    $("#reject-label").text(cancelMessage);  
+  });
+
+  
+</script>
+    
+
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">
+
+  <section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+    <div class="range">
+
+      <div class="col-sm-4">
+        {{ index := 0 }}
+        {{ if .Data.UserID == .Data.Booking.User.UserID}}
+           {{profile := .Data.Booking.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ else }}
+           {{profile := .Data.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ end }}
+      </div>
+
+      <div class="col-sm-6">
+          
+        <form id="payment-request-form" data-form-output="form-output-global" method="" action="" class="payment-request-form text-left">
+          
+          <div class="form-group">
+            <label for="comment">Message:</label>
+            <textarea id="payment-request-message" class="form-control" rows="3"></textarea>
+          </div>
+         
+          <div class="form-group offset-top-20">
+            {{ if .Data.BookingHistory.FromDate != "" || .Data.BookingHistory.ToDate != "" }}
+            <div class="row offset-top-20">
+              {{ if .Data.BookingHistory.FromDate != ""}}
+              <div class="col-sm-2">
+                <label>FromDate</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date date-picker" data-provide="datepicker" id="date-picker1">
+                  <label for="payment-request-from-date" class="form-label rd-input-label">From Date</label>
+                  <input id="payment-request-from-date" type="text" class="form-control" value='{{ .Data.BookingHistory.FromDate}}' data-constraints='@Required(label="From Date")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+
+              </div>
+              {{ end }}
+
+              {{ if .Data.BookingHistory.ToDate != ""}}
+              <div class="col-sm-2">
+                <label>ToDate</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date date-picker" data-provide="datepicker" id="date-picker2">
+                  <label for="payment-request-to-date" class="form-label rd-input-label">To Date</label>
+                  <input id="payment-request-to-date" type="text" class="form-control"  value='{{ .Data.BookingHistory.ToDate}}' data-constraints='@Required(label="From Date")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+            {{ if .Data.BookingHistory.FromTime != "" || .Data.BookingHistory.ToTime != "" }}
+            <div class="row offset-top-20">
+              {{ if .Data.BookingHistory.FromTime != ""}}
+              <div class="col-sm-2">
+                <label>FromTime</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date time-picker" data-provide="datepicker" id="date-picker3">
+                  <label for="payment-request-from-time" class="form-label rd-input-label">From Time</label>
+                  <input id="payment-request-from-time" type="text" class="form-control" value='{{ .Data.BookingHistory.FromTime}}'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.BookingHistory.ToTime != ""}}
+              <div class="col-sm-2">
+                <label>ToTime</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date time-picker" data-provide="datepicker" id="date-picker4">
+                  <label for="payment-request-to-time" class="form-label rd-input-label">To Time</label>
+                  <input id="payment-request-to-time" type="text" class="form-control" value='{{ .Data.BookingHistory.ToTime}}'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+
+            {{ if .Data.BookingHistory.Address != ""}}
+            <div class="row offset-top-20">
+              <div class="col-sm-2">
+                <label >Address</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="payment-request-address" class="form-label rd-input-label">Address</label>
+                  <input id="payment-request-address" type="text" class="form-control"  value='{{ .Data.BookingHistory.Address}}'>
+                </div>
+              </div>
+            </div>
+            {{ end }}
+            
+            {{ if  .Data.BookingHistory.Fee != 0 ||  .Data.BookingHistory.TotalPrice != 0}}
+            <div class="row offset-top-20">
+              {{ if  .Data.BookingHistory.Fee.IntPart() != 0 }}                  
+              <div class="col-sm-2">
+                <label>Fee</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="payment-request-fee" class="form-label rd-input-label">Fee</label>
+                  <input id="payment-request-fee" type="text" class="form-control"  value='{{ .Data.BookingHistory.Fee}}' data-constraints='@Required(label="Fee")'>
+                </div>               
+              
+              </div>
+              {{ end }}
+              {{ if  .Data.BookingHistory.TotalPrice.IntPart() != 0 }}
+              <div class="col-sm-2">
+                <label>TotalPrice</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="payment-request-total-price" class="form-label rd-input-label">TotalPrice</label>
+                  <input id="payment-request-total-price" type="text" class="form-control"  value='{{  .Data.BookingHistory.TotalPrice}}'>
+                </div>
+
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+            {{ if .Data.BookingHistory.FrequencyUnit != "" || .Data.BookingHistory.FrequencyValue != 0 }}
+            <div class="row offset-top-20">
+              {{ if .Data.BookingHistory.FrequencyUnit != "" }}
+              <div class="col-sm-2">
+                <label>Frequency Unit</label>
+              </div>
+              <div class="col-sm-4">
+                  <div id="frequency-group">
+                  <select id="payment-request-mwd-picker" value='{{ .Data.BookingHistory.FrequencyValue}}'>
+                    <option value='m'>Month</option>
+                    <option value='w'>Week</option>
+                    <option value='d'>Day</option>
+                  </select>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.BookingHistory.FrequencyValue != 0 }}
+              <div class="col-sm-2">
+                <label>FrequencyValue</label>
+              </div>
+              <div class="col-sm-4">
+                <input id="payment-request-frequency-value" type="text" class="form-control" value='{{ .Data.BookingHistory.FrequencyValue}}'>
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+            <div class="row offset-top-20">
+              <input type="hidden" class="booking-id" value="{{.Data.Booking.BookingID}}" />
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+
+          
+
+        </form>
+
+      </div>
+    </div>
+     
+  </section>
+</main>
+{{ end }}

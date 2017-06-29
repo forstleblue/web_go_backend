@@ -1,0 +1,400 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block">Booking Response</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }}
+{{ block BodyFooterIncludes() }}
+<script type="text/javascript">
+  var cancelMessage;
+  </script>
+  {{if .Data.UserID == .Data.Booking.User.UserID }}
+  <script>cancelMessage ="Are you sure you want to Cancel this booking? This may not reflect well on our reputation. Please manage the relationship with your service provider."</script>
+  {{ else }}
+  <script>cancelMessage = "Are you sure you want to Cancel this booking? This may not reflect well on our reputation. Please manage the relationship with your customer."</script>
+  {{ end }}
+  <script>
+  $(document).ready(function(){
+    $('.date-picker').datetimepicker({
+      format: 'DD/MM/YYYY'
+    });
+    $('.time-picker').datetimepicker({
+      format: 'LT'
+    });
+    $("#date-picker3").on("dp.change", function(e) {    
+      var time = moment(e.date).add(1, 'hour');    
+      $('#date-picker4').data("DateTimePicker").date(time);
+      $('#date-picker4 .form-label').focus();
+    });
+    
+  });
+  $("#btn-booking-request-message").click(function() {
+    var message = $('input[name="message"]:hidden');
+    message.val('YES');  
+  });
+  $("#btn-booking-request").click(function() {
+    var message = $('input[name="message"]:hidden');
+    message.val('NO');  
+  });
+  $('.starscore').rating({displayOnly: true, 				  
+    showCaption: true,    
+  });
+  $(".btn-cancel-booking").click(function(){
+    var cancel = $('input[name="cancel-booking"]:hidden');
+    cancel.val('YES');
+    $("#booking-reject").text("Cancel");  
+    $("#reject-label").text(cancelMessage);  
+  });
+
+$("#booking-response-mwd-picker").select2();
+</script>
+    {{ if .Data.BookingHistory.FrequencyUnit != "" }}   
+    <script>
+      $("#booking-response-mwd-picker").val('{{.Data.BookingHistory.FrequencyUnit}}');
+    </script>
+    {{ end }}
+
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">
+
+  <section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+    <div class="range">
+
+      <div class="col-sm-4">
+       
+        {{ index := 0 }}
+        {{ if .Data.UserID == .Data.Booking.User.UserID}}
+           {{profile := .Data.Booking.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ else }}
+           {{profile := .Data.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ end }}
+      </div>
+
+      <div class="col-sm-6">
+          <!--{{ history := "" }}
+          {{range index, bookingHistory := .Data.Booking.GetBookingHistories(.Data.Booking.BookingID)}}
+          {{history = history + "Date: "+ bookingHistory.CreatedTimeFormat() + ", User Name: " +  bookingHistory.GetUserNameWithUserID(bookingHistory.UserID) + ", Booking Status: " + bookingHistory.BookingStatus + ", Message: " + bookingHistory.Message + " \n"}}
+          {{ end }}
+          {{ if history != "" }}
+          <label for="comment">Booking History</label>
+          <textarea id="booking-history" class="form-control" rows="3">{{history}}</textarea>
+          {{ end }}-->
+        <form id="booking-response-form" data-form-output="form-output-global" method="" action="" class="booking-response-form text-left">
+          
+          <div class="form-group">
+            <label for="comment">Message:</label>
+            <textarea id="booking-message" class="form-control" rows="3" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }}  disabled="" {{ end}} ></textarea>
+          </div>
+         
+          <div class="form-group offset-top-20">
+            {{ if .Data.BookingHistory.FromDate != "" || .Data.BookingHistory.ToDate != "" }}
+            <div class="row offset-top-20">
+              {{ if .Data.BookingHistory.FromDate != ""}}
+              <div class="col-sm-2">
+                <label>FromDate</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date date-picker" data-provide="datepicker" id="date-picker1">
+                  <label for="booking-response-from-date" class="form-label rd-input-label">From Date</label>
+                  <input id="booking-response-from-date" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.FromDate}}' data-constraints='@Required(label="From Date")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+
+              </div>
+              {{ end }}
+
+              {{ if .Data.BookingHistory.ToDate != ""}}
+              <div class="col-sm-2">
+                <label>ToDate</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date date-picker" data-provide="datepicker" id="date-picker2">
+                  <label for="booking-response-to-date" class="form-label rd-input-label">To Date</label>
+                  <input id="booking-response-to-date" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.ToDate}}' data-constraints='@Required(label="From Date")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+            {{ if .Data.BookingHistory.FromTime != "" || .Data.BookingHistory.ToTime != "" }}
+            <div class="row offset-top-20">
+              {{ if .Data.BookingHistory.FromTime != ""}}
+              <div class="col-sm-2">
+                <label>FromTime</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date time-picker" data-provide="datepicker" id="date-picker3">
+                  <label for="booking-response-from-time" class="form-label rd-input-label">From Time</label>
+                  <input id="booking-response-from-time" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{end}} value='{{ .Data.BookingHistory.FromTime}}'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.BookingHistory.ToTime != ""}}
+              <div class="col-sm-2">
+                <label>ToTime</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="input-group date time-picker" data-provide="datepicker" id="date-picker4">
+                  <label for="booking-response-to-time" class="form-label rd-input-label">To Time</label>
+                  <input id="booking-response-to-time" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.ToTime}}'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+
+            {{ if .Data.BookingHistory.Address != ""}}
+            <div class="row offset-top-20">
+              <div class="col-sm-2">
+                <label >Address</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="booking-response-address" class="form-label rd-input-label">Address</label>
+                  <input id="booking-response-address" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.Address}}'>
+                </div>
+              </div>
+            </div>
+
+            {{ end }}
+            {{ if  .Data.BookingHistory.Fee != 0 ||  .Data.BookingHistory.TotalPrice != 0}}
+            <div class="row offset-top-20">
+              {{ if  .Data.BookingHistory.Fee.IntPart() != 0 }}                  
+              <div class="col-sm-2">
+                <label>Fee</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="booking-response-fee" class="form-label rd-input-label">Fee</label>
+                  <input id="booking-response-fee" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.Fee}}' data-constraints='@Required(label="Fee")'>
+                </div>               
+              
+              </div>
+              {{ end }}
+              {{ if  .Data.BookingHistory.TotalPrice.IntPart() != 0 }}
+              <div class="col-sm-2">
+                <label>TotalPrice</label>
+              </div>
+              <div class="col-sm-4">
+                <div class="form-group">
+                  <label for="booking-response-total-price" class="form-label rd-input-label">TotalPrice</label>
+                  <input id="booking-response-total-price" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true  && len(.Data.BookingHistory.Address) != 0}} disabled="" {{ end }} value='{{  .Data.BookingHistory.TotalPrice}}'>
+                </div>
+
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+            {{ if .Data.BookingHistory.FrequencyUnit != "" || .Data.BookingHistory.FrequencyValue != 0 }}
+            <div class="row offset-top-20">
+              {{ if .Data.BookingHistory.FrequencyUnit != "" }}
+              <div class="col-sm-2">
+                <label>Frequency Unit</label>
+              </div>
+              <div class="col-sm-4">
+                  <div id="frequency-group">
+                  <select id="booking-response-mwd-picker" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.FrequencyValue}}'>
+                    <option value='m'>Month</option>
+                    <option value='w'>Week</option>
+                    <option value='d'>Day</option>
+                  </select>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.BookingHistory.FrequencyValue != 0 }}
+              <div class="col-sm-2">
+                <label>FrequencyValue</label>
+              </div>
+              <div class="col-sm-4">
+                <input id="booking-response-frequency-value" type="text" class="form-control" {{ if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }} disabled="" {{ end }} value='{{ .Data.BookingHistory.FrequencyValue}}'>
+              </div>
+              {{ end }}
+            </div>
+            {{ end }}
+          </div>
+          {{ if .Data.UserID == .Data.Booking.User.UserID }}      
+            {{ if .Data.BookingHistory.BookingStatus == "Accepted"}}
+              
+            {{ else if .Data.BookingHistory.BookingStatus == "Rejected" || .Data.BookingHistory.BookingStatus == "Cancel" }}   
+              {{ if .Data.BookingHistory.BookingStatus == "Rejected" }}
+                <h3>This booking was rejected.</h3>
+              {{ else }}
+                <h3>This booking was canceled.</h3>
+              {{ end }}     
+            {{ else if .Data.BookingHistory.BookingStatus == "Pending Payment"}}      
+
+            {{ else if .Data.BookingHistory.BookingStatus != "Pending Completion"  && .Data.BookingHistory.CheckBookingHistoryUpdate() == false}}
+              <div class="group group-xl offset-top-30 text-center text-md-left">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            {{ else if .Data.BookingHistory.BookingStatus == "Pending Completion" && .Data.BookingHistory.CheckBookingHistoryUpdate() == false}}
+              <div class="group group-xl offset-top-30 text-center text-md-left">                
+                <button type="button" class="btn btn-primary btn-cancel-booking" data-toggle="modal" data-target="#booking-reject-modal">Cancel</button>                
+              </div>           
+      
+            {{ end }}
+
+          {{ else }}
+            {{ if .Data.BookingHistory.BookingCancel() == true}}
+            
+            {{ else if .Data.Booking.CheckBookingAcceptedWithBookingID(.Data.Booking.BookingID) == true }}
+              <input class="booking-history-id" type="hidden" name="id" value="{{ .Data.BookingHistory.BookingHistoryID }}" />
+              {{ paymentCreated := .Data.Booking.CheckPaymentRequest() }}
+              {{ paymentStatus := .Data.Booking.GetPaymentRequestStatus() }}
+             
+              {{ if paymentCreated == false }}
+                <div class="group group-xl offset-top-30 text-center text-md-left">
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#payment-request-modal">Send Payment Request</button>
+                  <button type="button" data-toggle="modal" data-target="#booking-reject-modal" class="btn btn-primary btn-cancel-booking">Cancel</button>
+                </div>
+              {{ else if paymentCreated == true }}
+                {{ if paymentStatus == "NEW"}}
+                  <button type="button" id="payment-request" class="btn btn-primary offset-top-20" disabled="">Payment Request</button>
+                {{ else if paymentStatus == "DECLINED"}}
+                  <button type="button" id="payment-request" class="btn btn-primary offset-top-20">Payment Request</button>
+                {{ else if paymentStatus == "PAID"}}
+                  <button type="button" id="payment-request" class="btn btn-primary offset-top-20" disabled="">Payment Request</button>
+                {{ end }}
+              {{ end }}
+              
+            {{ else }}              
+              {{ if .Data.BookingHistory.CheckBookingHistoryUpdate() == false }}
+                <div class="group group-xl offset-top-30 text-center text-md-left">                  
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+
+        </form>
+
+      </div>
+    </div>
+
+    <div class="modal modal-custom fade" id="booking-accept-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h2>Booking Accept</h2>
+          </div>
+          <div class="modal-body">
+            <form id="booking-accept-form" data-form-output="form-output-global" method="post" action="" class="booking-accept-form text-left">
+              <input class="booking-id" type="hidden" name="id" value="{{ .Data.Booking.BookingID }}" />
+              <textarea id="booking-accept-message" class="form-control booking-message" rows="3"></textarea>
+              <div class="offset-top-30"><button type="submit" id="booking-accept" class="btn btn-primary btn-block">Accept</button></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal modal-custom fade" id="booking-reject-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h3 id="reject-label">Booking Reject</h3>
+          </div>
+          <div class="modal-body">
+            <form id="booking-reject-form" data-form-output="form-output-global" method="post" action="" class="booking-reject-form text-left">
+              <input class="booking-id" type="hidden" name="id" value="{{ .Data.Booking.BookingID }}" />
+              <textarea id="booking-reject-message" class="form-control booking-message" rows="3" placeholder="Message"></textarea>
+              <input  type="hidden" name="cancel-booking"  />
+              <div class="offset-top-30"><button type="submit" id="booking-reject" class="btn btn-primary btn-block">Reject</button></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal modal-custom fade" id="booking-message-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h2>Booking Message</h2>
+          </div>
+          <div class="modal-body">
+            <form id="booking-message-form" data-form-output="form-output-global" method="post" action="" class="booking-message-form text-left">
+              <input class="booking-id" type="hidden" name="id" value="{{ .Data.Booking.BookingID }}" />
+              <textarea id="booking-message-content" class="form-control booking-message" rows="3"></textarea>
+              <div class="offset-top-30"><button type="submit" class="btn btn-primary btn-block">Message</button></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal modal-custom fade" id="booking-request-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header text-center">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h2>Booking Request</h2>
+          </div>
+          <div class="modal-body">
+            <form id="booking-request-form" data-form-output="form-output-global" method="post" action="" class="booking-request-form text-left">
+              <input class="profile-id" type="hidden" name="id" value="{{ .Data.Booking.Profile.ProfileID }}" />
+              <input class="booking-update" type="hidden" value="Yes" />
+              <input class="booking-history-id" type="hidden" value={{.Data.BookingHistory.BookingHistoryID}} />
+              <input class="message-field" type="hidden" name="message" />
+              <textarea id="booking-message" class="form-control booking-message" rows="3" placeholder="Message"></textarea>
+              <div class="offset-top-30"><button type="submit" class="btn btn-primary btn-block">Send</button></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal modal-custom fade" id="payment-request-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h2>Payment Request</h2>
+          </div>
+          <div class="modal-body">
+            <form id="payment-request-form" data-form-output="form-output-global" method="post" action="" class="payment-request-form text-left">
+              <input class="booking-id" type="hidden" name="id" value="{{ .Data.Booking.BookingID }}" />
+              <input class="message-field" type="hidden" name="message" />
+              <textarea id="payment-request-message" class="form-control booking-message" rows="3" placeholder="Message"></textarea>
+              <div class="offset-top-30"><button type="submit" class="btn btn-primary btn-block">Send Payment Request</button></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>     
+  </section>
+</main>
+{{ end }}

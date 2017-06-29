@@ -1,0 +1,37 @@
+	import {
+    	"github.com/gocql/gocql"
+        "github.com/codahale/blake2"
+    } 
+    
+    //https://academy.datastax.com/resources/getting-started-apache-cassandra-and-go
+
+	// connect to the cluster in docker (nuri-macbook)
+	cluster := gocql.NewCluster("192.168.99.100:32770")
+	cluster.Keyspace = "demo"
+	session, _ := cluster.CreateSession()
+	defer session.Close()
+
+	// insert a user
+	if err := session.Query("INSERT INTO users (lastname, age, city, email, firstname) VALUES ('Jones', 35, 'Austin', 'bob@example.com', 'Bob')").Exec(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Use select to get the user we just entered
+	var firstname string
+	//, lastname, city, email string
+	var age int
+
+	if err := session.Query("SELECT firstname, age FROM users WHERE lastname='Jones'").Scan(&firstname, &age); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("from ScyllaDB:", firstname, age)
+
+	blake2b is very secure and fast hashing alg: see https://godoc.org/github.com/codahale/blake2#pkg-examples
+	h, _ := blake2b.New(&blake2b.Config{Key: []byte("user_id"), Salt: []byte("user_email"), Person: []byte("ur_s@f3w1thu5_%r&a(n-")})
+	h.Write([]byte("user-full-name"))
+	d := h.Sum(nil)
+	fmt.Printf("The user access hash required in header for all calls is %X", d)
+
+	//just use a TimeUUID in HTTP header (back and forward) for each client session
+	tid := gocql.TimeUUID()
+	fmt.Printf("The client access secret TIMEUUID required in HTTP header for all communication is %v %v \n", tid.String(), tid.Time())

@@ -1,0 +1,5 @@
+ALTER TABLE ONLY users
+    DROP COLUMN IF EXISTS payout_type;
+
+ALTER TABLE ONLY users
+    DROP COLUMN IF EXISTS payout_account;

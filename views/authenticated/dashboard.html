@@ -1,0 +1,701 @@
+{{ extends "layout-authenticated.html" }} 
+
+
+
+{{ block BodyAuth() }}
+<div class="range range-xs-center offset-top-41">
+    <div class="cell-sm-12 text-left">
+		<!-- Responsive-tabs-->
+		<div id="s" data-type="horizontal" class="responsive-tabs responsive-tabs-classic">
+			<ul data-group="tabs-group-default" class="resp-tabs-list tabs-1 text-center tabs-group-default">
+				<li>Messages</li>
+				<li id="notification-tab">Notifications <span class="badge" style="margin-top: -4px;margin-left: 5px;">{{if .Data.UnreadNotificationCount !=0 }} {{.Data.UnreadNotificationCount}}{{end}}</span></li>
+				<li>Feedback and Recommendations</li>				
+			</ul>
+			<div data-group="tabs-group-default" class="resp-tabs-container text-left tabs-group-default">
+				<div class="row">
+					<div class="col-lg-offset-1 col-lg-11">	
+						<div id="message-data">
+							<!--contents -->
+							
+						</div>
+						
+						<div class="clearfix offset-top-41">
+							<nav class="pull-right"> 
+								<ul id="dash-rooms-pagination" class="pagination">
+									
+								</ul>
+							</nav>
+							<div class="dropdown inline-block pull-right">
+								<button class="btn btn-default dropdown-toggle" id="displayNum" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">3 Per Page<span class="caret"></span></button>
+								<ul id="dropdownNum" class="dropdown-menu" aria-labelledby="dropdownMenu4">
+									<li id="li-3" class="disabled"><a>3 Per Page</a></li>
+									<li id="li-5"><a>5 Per Page</a></li>
+									<li id="li-10"><a>10 Per Page</a></li>
+									<li id="li-20"><a>20 Per Page</a></li>
+								</ul>
+							</div>							
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-offset-3 col-lg-9">
+						<div class="form-group">
+							<label class="radio-inline">
+								<input name="input-group-radio" value="action-required" type="radio" checked="checked">Action Required
+							</label>
+							<label class="radio-inline">
+								<input name="input-group-radio" value="open" type="radio">Open
+							</label>
+							<label class="radio-inline">
+								<input name="input-group-radio" value="closed" type="radio">Closed
+							</label>
+							<label class="radio-inline">
+								<input name="input-group-radio" value="all" type="radio">All
+							</label>
+						</div>
+					</div>
+					<div class="col-lg-offset-1 col-lg-11">						
+						<div class="range">
+							{{ range element := .Data.Notifications}}							
+							<div class="col-md-12 offset-top-20 notification" style="padding: 20px;border: 1px solid #ddd;border-radius: 5px;height: 100%;">
+								
+								<div class="col-md-9">
+									{{ if element.NotificationType == "BookingRequest" }}
+									<div>
+										{{ hours := element.BookingHistory().GetBookingDuration() }}										
+										<strong>{{ element.Sender().FullName() }}</strong> sent you a <strong>New Booking Request</strong>(ID {{element.Booking().BookingID}})<br/>										
+										{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>
+										{{element.BookingHistory().Message}} <br/></br>
+										Created {{element.BookingHistory().CreatedTimeFormat()}}										
+									</div>
+									
+									<div class="group group-xl offset-top-20 text-center text-md-left">
+										<button type="button" class="btn btn-xs btn-success" data-toggle="collapse" data-target="#bookingAcceptForm{{element.BookingHistory().BookingHistoryID}}" aria-expanded="false" aria-controls="bookingAcceptForm{{element.BookingHistory().BookingHistoryID}}" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Accept</button>
+										<button type="button" class="btn btn-xs btn-danger" data-toggle="collapse" data-target="#bookingDeclineForm{{element.BookingHistory().BookingHistoryID}}" aria-expanded="false" aria-controls="bookingRejectForm{{element.BookingHistory().BookingHistoryID}}" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Decline</button>
+										<a href="/booking-response/{{element.Booking().BookingUUID}}/{{element.BookingHistory().BookingHistoryUUID}}" class="btn btn-xs btn-info" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Message</a>
+										
+									</div>
+									
+									<div id="bookingAcceptForm{{element.BookingHistory().BookingHistoryID}}" class="booking-accept-form-wrapper collapse">
+										<form id="booking-accept-form">																							
+											<div class="form-group">
+												<label for="booking-accept-message" class="form-label-outside text-sbold">Message</label>
+												<textarea name="booking-accept-message" id="booking-accept-message" style="height: 100px;" class="form-control"></textarea>
+											</div>
+											<button type="submit" class="btn btn-xs btn-primary submit">Accept</button> 																	
+										</form>
+									</div>
+									<div id="bookingDeclineForm{{element.BookingHistory().BookingHistoryID}}" class="booking-decline-form-wrapper collapse">
+										<form id="booking-decline-form">																							
+											<div class="form-group">
+												<label for="booking-decline-message" class="form-label-outside text-sbold">Message</label>
+												<textarea name="booking-decline-message" id="booking-decline-message" style="height: 100px;" class="form-control"></textarea>
+											</div>
+											<button type="submit" class="btn btn-xs btn-primary submit">Decline</button> 																	
+										</form>
+									</div>											
+									<div id="bookingCancelForm{{element.BookingHistory().BookingHistoryID}}" class="booking-cancel-form-wrapper collapse">
+										<form id="booking-cancel-form">																							
+											<div class="form-group">												
+												<label for="booking-cancel-message" class="form-label-outside text-sbold">Message</label>
+												<textarea name="booking-cancel-message" id="booking-cancel-message" style="height: 100px;" class="form-control"></textarea>
+											</div>
+											<button type="submit" class="btn btn-xs btn-danger submit">Cancel Booking</button> 																	
+										</form>
+									</div>
+									{{ else if element.NotificationType == "BookingResponse" }}
+									<div>
+										{{ hours := element.BookingHistory().GetBookingDuration() }}
+										{{ if element.BookingHistory().BookingStatus == "Pending Completion" || element.BookingHistory().BookingStatus == "Pending Payment" }}
+											{{ if element.SenderID != element.ReceiverID}}	
+												{{ if element.Sender().UserID == element.Booking().Profile.User.UserID }}
+												<strong>{{ element.Sender().FullName() }}</strong> accepted your <strong>Booking Request</strong>(ID {{element.Booking().BookingID}})<br/>
+												{{ else }}
+												<strong>{{ element.Sender().FullName() }}</strong> accepted the <strong>Booking</strong>(ID {{element.Booking().BookingID}})<br/>
+												{{ end }}
+											{{ else if element.SenderID == element.ReceiverID }}
+											    {{ if element.Sender().UserID == element.Booking().User.UserID }}
+												<strong>You </strong> accepted the <strong>Booking</strong>(ID {{element.Booking().BookingID}})<br/>
+												{{ end }}
+											{{ end }}																				
+																					
+											{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>									
+										{{ else if element.BookingHistory().BookingStatus == "Message" }}		
+											<strong>{{ element.Sender().FullName() }}</strong> sent you a <strong>Message</strong> about your <strong>Booking Request</strong>(ID {{element.Booking().BookingID}})<br/>										
+											{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} {{ if element.BookingHistory().DurationChanged() == true}} <span style="color: red">Changed</span> {{end}} Total Cost AU${{element.BookingHistory().Fee}} {{ if element.BookingHistory().FeeChanged() == true}}<span style="color: red">Changed.</span> {{end}}<br/>													
+										{{ else if element.BookingHistory().BookingStatus == "Decline" }}
+											<strong>{{ element.Sender().FullName() }}</strong> declined your <strong>Booking Request</strong>(ID {{element.Booking().BookingID}})<br/>										
+											{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>
+										{{ else if element.BookingHistory().BookingStatus == "Cancel" }}
+											<strong>{{ element.Sender().FullName() }}</strong> Cancelled a <strong>Booking</strong>(ID {{element.Booking().BookingID}})<br/>										
+											{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>
+										{{ end }}	
+										{{element.BookingHistory().Message}}							
+									</div>									
+									<div>								
+										<br/>Created {{element.BookingHistory().CreatedTimeFormat()}}
+									</div>
+										{{ if element.BookingHistory().BookingStatus == "Pending Completion" }}
+											<div class="group group-xl offset-top-20 text-center text-md-left">
+												<button type="button" class="btn btn-xs btn-danger" data-toggle="collapse" data-target="#bookingCancelForm{{element.BookingHistory().BookingHistoryID}}" aria-expanded="false" aria-controls="bookingCancelForm{{element.BookingHistory().BookingHistoryID}}" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Cancel Booking</button>																		
+												{{ if .Data.UserID == element.Booking().Profile.User.UserID}}
+												<a href="/send-payment-request/{{element.Booking().BookingUUID}}/{{element.BookingHistory().BookingHistoryUUID}}" class="btn btn-xs btn-info" {{ if element.Booking().CheckPaymentRequest() == true || element.BookingHistory().BookingCancel() == true }} disabled {{ end }}>Payment Request</a>
+												{{ end }}
+											</div>
+										{{ else if element.BookingHistory().BookingStatus == "Message" }}
+											<div class="group group-xl offset-top-20 text-center text-md-left">
+												<button type="button" class="btn btn-xs btn-success" data-toggle="collapse" data-target="#bookingAcceptMessageForm{{element.BookingHistory().BookingHistoryID}}" aria-expanded="false" aria-controls="bookingAcceptMessageForm{{element.BookingHistory().BookingHistoryID}}" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Accept</button>			
+												<button type="button" class="btn btn-xs btn-danger" data-toggle="collapse" data-target="#bookingCancelForm{{element.BookingHistory().BookingHistoryID}}" aria-expanded="false" aria-controls="bookingCancelForm{{element.BookingHistory().BookingHistoryID}}" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Cancel Booking</button>															
+												<a href="/booking-response/{{element.Booking().BookingUUID}}/{{element.BookingHistory().BookingHistoryUUID}}" class="btn btn-xs btn-info" {{if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Message</a>
+										
+											</div>
+										{{ else if element.BookingHistory().BookingStatus == "Cancel" || element.BookingHistory().BookingStatus == "Rejected" }}
+										{{ end }}
+									<div id="bookingCancelForm{{element.BookingHistory().BookingHistoryID}}" class="booking-cancel-form-wrapper collapse">
+										<form id="booking-cancel-form">																							
+											<div class="form-group">												
+												<label for="booking-cancel-message" class="form-label-outside text-sbold">Message</label>
+												<textarea name="booking-cancel-message" id="booking-cancel-message" style="height: 100px;" class="form-control"></textarea>
+											</div>
+											<button type="submit" class="btn btn-xs btn-danger submit">Cancel Booking</button> 																	
+										</form>
+									</div>
+									<div id="bookingAcceptMessageForm{{element.BookingHistory().BookingHistoryID}}" class="booking-accept-form-wrapper collapse">
+										<form id="booking-accept-form">																							
+											<div class="form-group">																						
+												<label for="booking-accept-message" class="form-label-outside text-sbold">Message</label>
+												<textarea name="booking-accept-message" id="booking-accept-message" style="height: 100px;" class="form-control"></textarea>
+											</div>
+											<button type="submit" class="btn btn-xs btn-primary submit">Accept</button> 																	
+										</form>
+									</div>
+									
+									<input type="hidden" value="{{element.BookingHistory().BookingHistoryID}}" class="booking-history-id" />
+									
+									{{ else if element.NotificationType == "FeedbackReceived" }}
+									{{ hours := element.BookingHistory().GetBookingDuration() }}
+									<div>
+										<strong>{{element.Sender().FullName()}}</strong> Wrote you a <strong>Review</strong> (ID {{element.Booking().BookingID}})										
+									</div>
+									<div>
+										{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}}{{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{end}} {{element.Sender().FullName()}} wrote this about you:<br/>
+									</div>
+									<div>
+									{{ if element.TwoFeedbackCompleted() == true }}
+										{{ range index, feedbackItem := .Data.FeedbackList}}
+											{{if feedbackItem.FeedbackDetail.BookingID == element.EntityID}}																									
+													<input class="starscore" name="starscore-1" value="{{feedbackItem.FeedbackDetail.Score / 20}}" class="rating-loading" data-size="1em" style="display: inline">													
+													<div style="display: inline">{{feedbackItem.FeedbackDetail.Comment}} <span style="color:red">{{feedbackItem.FeedbackDetail.SdaText[0]}} {{feedbackItem.FeedbackDetail.SdaText[1]}} {{feedbackItem.FeedbackDetail.SdaText[2]}}</span> <br></div>
+													{{feedbackItem.FeedbackDetail.Description}}<br/>
+													Created <time datetime="2016-01-01">{{element.BookingHistory().CreatedTimeFormat()}}</time>	<br/>																							
+											{{ end }}
+										{{ end }}
+									{{ else }}
+									<hr style="height:15px;border:none;color:grey;background-color:grey; margin-bottom: 0px;" />									
+									You can read {{element.Sender().FullName()}}&#146s review of your own for this transaction, or at the end of the feedback perido on &#060 TransactioDate + 14 days><br/>
+									<div>
+										Created <time datetime="2016-01-01">{{element.BookingHistory().CreatedTimeFormat()}}</time>	<br/>
+										<a href="/feedback/{{ element.Booking().BookingUUID }}" class="btn btn-xs btn-danger">Leave a Feedback</a>
+									</div>
+									{{ end }}
+									
+										
+									</div>
+									<div class="unit-left">
+										<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+											<!--<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+											<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>-->
+										</ul>
+									</div>									
+									
+									{{else if element.NotificationType == "Rating"}}									
+									<div>
+										Rated by <strong>{{ element.Sender().FullName() }}</strong> on eBay
+										<ul style="padding-left: 20px; margin-bottom: 0; display: inline-block;">
+											<li class="icon icon-xs icon-primary fa fa-star"></li>
+											<li class="icon icon-xs icon-primary fa fa-star"></li>
+											<li class="icon icon-xs icon-primary fa fa-star"></li>
+											<li class="icon icon-xs icon-primary fa fa-star"></li>
+											<li class="icon icon-xs icon-primary fa fa-star"></li>
+										</ul>
+									</div>
+									<div class="unit-left">
+										<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+											<li>
+												<span class="box-comment-icon mdi mdi-clock"></span>
+												<time datetime="2016-01-01">{{ element.BookingHistory().CreatedTimeFormat()}}</time>
+											</li>
+											<!--<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+											<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>-->
+										</ul>
+									</div>	
+									
+									{{ else if element.NotificationType == "PaymentRequest" || element.NotificationType == "PaymentRequestMessage"}}									
+									<div>
+										{{ hours := element.BookingHistory().GetBookingDuration() }}		
+										{{ if element.NotificationType == "PaymentRequestMessage" }}
+											<strong>{{ element.Sender().FullName() }}</strong> sent you a <strong>Message</strong> about a <strong>Payment</strong>(ID {{element.Payment().PaymentID}})<br/>										
+											{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }}  Total Cost AU${{element.BookingHistory().Fee}} <br/>
+											{{ if len(element.BookingHistory().Message) !=0 }}								
+												<p><span class="glyphicon glyphicon-envelope" style="color: blue"></span> {{element.BookingHistory().Message}}  </p>
+											{{ end }}
+										{{ else if element.NotificationType == "PaymentRequest"}}	
+											<strong>{{ element.Sender().FullName() }}</strong> sent you a <strong>Payment Request</strong> for a <strong>Payment</strong>(ID {{element.Payment().PaymentID}})<br/>										
+											{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>
+											{{ if len(element.BookingHistory().Message) !=0 }}								
+												<p><span class="glyphicon glyphicon-envelope" style="color: blue"></span> {{element.BookingHistory().Message}}  </p>
+											{{ end }}	
+										{{ end }}						
+										
+										Created <time datetime="2016-01-01">{{element.BookingHistory().CreatedTimeFormat()}}</time>																	
+									</div>										
+									<div class="unit-left">
+										<!--<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+											<li>
+												<span class="box-comment-icon mdi mdi-clock"></span>
+												<time datetime="2016-01-01">{{ element.Payment().RequestDateFormatted()}}</time>
+											</li>
+											<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+											<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>
+										</ul>-->										
+										<div class="to-pay">
+											<div class="pay-buttons" >
+												
+												<div class="btn-group btn-group-xs">
+													<button class="btn btn-xs btn-primary dropdown-toggle pay-button" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {{ if element.BookingHistory().CheckBookingHistoryUpdate() == true || element.Payment().Status == "PAID" }} disabled {{ end }} >
+														Pay<span class="caret"></span></button>
+													<ul class="dropdown-menu">
+														{{ if element.Receiver().CreditCardID }}
+														<li><a class="payRequestCreditCard payRequestPayment" href="#" data-type="CC" data-paymentrequest-id="{{ element.EntityID }}">Pay with Credit Card</a></li>
+														{{ else }}
+														<li><a class="payRequestAddCreditCard" href="/payment-methods">Add Saved Credit Card</a></li>
+														{{ end }}
+														<li><a class="payRequestPaypal payRequestPayment" href="#" data-type="PAYPAL" data-paymentrequest-id="{{ element.EntityID }}">Pay with Paypal</a></li>
+													</ul>
+												</div>	
+												<a href="/send-payment-request/{{element.Booking().BookingUUID}}/{{element.BookingHistory().BookingHistoryUUID}}" class="btn btn-xs btn-info" {{ if element.BookingHistory().CheckBookingHistoryUpdate() == true || element.Payment().Status == "PAID" }} disabled {{ end }}>Amend</a>
+												<!--<button class="btn btn-xs btn-primary add-tip-button" data-toggle="collapse" data-target="#addTipForm" aria-expanded="false">Add a Tip</button>-->
+											</div>
+											
+											<div class="pay-status" {{ if element.Payment().Status == "NEW" }} style="display: none" {{ end }}>
+												{{ if element.Payment().Status == "PAID" }}
+												<span class="text-success">Paid {{ element.Payment().PaymentDateFormatted()}}</span>
+												{{ else if element.Payment().Status == "DECLINED" }}
+												<span class="text-danger">Declined {{ element.Payment().PaymentDateFormatted()}}</span>
+												{{ else if element.Payment().Status == "PROCESSING" }}
+													{{ if element.Payment().PaymentMethod == "PAYPAL"}}
+													{{ if element.Payment().PaypalToken == ""}}
+													<span class="text-danger">It seems like something might have gone wrong during your Paypal payment. Please contact us so we can resolve the issue.</span>
+													{{ else }}
+													<p>It looks like your Paypal payment is incomplete, you might have closed the window before finalising. <a class="text-danger" href="{{.Data.PaypalRedirectURL}}{{element.Payment().PaypalToken}}">Continue and finish paying</a> or <a class="text-danger" href="/cancel-paypal-payment?id={{element.Payment().PaymentID}}">Cancel</a>.</p>
+													<p>If you believe this to be in error, you can <a class="text-danger" href="/refresh-paypal-payment?id={{element.Payment().PaymentID}}">Refresh</a> the status or wait until our verification process updates it automatically. If you continue to have this problem, please contact us so we can resolve your issue.</p>
+													{{ end }}
+													{{ else if element.Payment().PaymentMethod == "CC" }}
+													<span class="text-danger">It seems like something might have gone wrong during your Credit Card payment. Please contact us so we can resolve the issue.</span>
+													{{ end }}
+												{{ end }}
+											</div>
+											
+											<div id="addTipForm" class="add-tip-form-wrapper collapse">
+												<form class="add-tip-form">		
+													<input type="hidden" id="payment-request-id" value="{{ element.Payment().PaymentID}}" />											
+													<div class="form-group">
+														<label for="add-tip" class="form-label-outside text-sbold">Tip</label>
+														<input name="add-tip" type="text"  class="form-control"/>
+													</div>
+													<button type="submit" class="btn btn-xs btn-primary submit">Submit</button> 																	
+												</form>
+											</div>
+											<div id="payRequestDeclineForm{{ element.Payment().PaymentID}}" class="pay-decline-form-wrapper collapse">
+												<form class="pay-decline-form">
+													<input type="hidden" name="id" value="{{ element.Payment().PaymentID}}" />
+													<div class="form-group">
+														<label for="decline-reason" class="form-label-outside text-sbold">Decline Reason</label>
+														<textarea name="decline-reason" style="height: 100px;" class="form-control"></textarea>
+													</div>
+													<button type="submit" class="btn btn-xs btn-primary submit">Submit</button> 
+													<button class="btn btn-xs btn-default cancel" onclick="return false;" data-toggle="collapse" data-target="#payRequestDeclineForm{{ element.Payment().PaymentID}}">Cancel</button>
+													<div role="alert" class="alert alert-danger" style="display: none">
+														<p class="offset-top-0">Error declining payment. Please try again later.</p>
+													</div>
+												</form>
+											</div>
+
+											<div role="alert" class="alert alert-success" style="display: none">
+												<p class="offset-top-0">Payment successful</p>
+											</div>
+											<div role="alert" class="alert alert-danger" style="display: none">
+												<p class="offset-top-0">Error making payment. Please try again later.</p>
+											</div>
+										</div>
+									</div>	
+									
+									{{ else if element.NotificationType == "PaymentRequestResponse" }}
+									<div>
+										{{ hours := element.BookingHistory().GetBookingDuration() }}											
+										<strong>{{ element.Sender().FullName() }}</strong> amended  <strong>Payment Request</strong> for a <strong>Payment</strong>(ID {{element.Payment().PaymentID}})<br/>										
+										{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ if element.BookingHistory().DurationChanged() == true}} <span style="color: red">Changed</span> {{end}} Total Cost AU${{element.BookingHistory().Fee}} {{ if element.BookingHistory().FeeChanged() == true}}<span style="color: red">Changed.</span> {{end}} {{ end }} <br/>
+										{{ if len(element.BookingHistory().Message) !=0 }}								
+											<p><span class="glyphicon glyphicon-envelope" style="color: blue"></span> {{element.BookingHistory().Message}}  </p>
+										{{ end }}
+										Created <time datetime="2016-01-01">{{element.BookingHistory().CreatedTimeFormat()}}</time>	
+										
+										
+										{{ if .Data.UserID == element.Booking().Profile.User.UserID }}
+										<div>
+											<a href="/send-payment-request/{{element.Booking().BookingUUID}}/{{element.BookingHistory().BookingHistoryUUID}}" class="btn btn-xs btn-info" {{ if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Amend</a>									
+											<button type="button" class="btn btn-xs btn-success" data-toggle="collapse" data-target="#payRequestMessageForm{{element.Payment().PaymentID}}" aria-expanded="false" aria-controls="payRequestMessageForm{{element.Payment().PaymentID}}" {{ if element.BookingHistory().CheckBookingHistoryUpdate() == true }} disabled {{ end }}>Message</button>											
+										</div>
+										{{ else if .Data.UserID == element.Booking().User.UserID}}
+										<div class="unit-left">
+										<!--<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+											<li>
+												<span class="box-comment-icon mdi mdi-clock"></span>
+												<time datetime="2016-01-01">{{ element.Payment().RequestDateFormatted()}}</time>
+											</li>
+											<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+											<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>
+										</ul>-->										
+											<div class="to-pay">
+												<div class="pay-buttons" >
+													
+													<div class="btn-group btn-group-xs">
+														<button class="btn btn-xs btn-primary dropdown-toggle pay-button" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {{ if element.BookingHistory().CheckBookingHistoryUpdate() == true || element.Payment().Status == "PAID" }} disabled {{ end }} >
+															Pay<span class="caret"></span></button>
+														<ul class="dropdown-menu">
+															{{ if element.Receiver().CreditCardID }}
+															<li><a class="payRequestCreditCard payRequestPayment" href="#" data-type="CC" data-paymentrequest-id="{{ element.EntityID }}">Pay with Credit Card</a></li>
+															{{ else }}
+															<li><a class="payRequestAddCreditCard" href="/payment-methods">Add Saved Credit Card</a></li>
+															{{ end }}
+															<li><a class="payRequestPaypal payRequestPayment" href="#" data-type="PAYPAL" data-paymentrequest-id="{{ element.EntityID }}">Pay with Paypal</a></li>
+														</ul>
+													</div>	
+													<a href="/send-payment-request/{{element.Booking().BookingUUID}}/{{element.BookingHistory().BookingHistoryUUID}}" class="btn btn-xs btn-info" {{ if element.BookingHistory().CheckBookingHistoryUpdate() == true || element.Payment().Status == "PAID" }} disabled {{ end }}>Amend</a>
+													<!--<button class="btn btn-xs btn-primary add-tip-button" data-toggle="collapse" data-target="#addTipForm" aria-expanded="false">Add a Tip</button>-->
+												</div>
+												
+												<div class="pay-status" {{ if element.Payment().Status == "NEW" }} style="display: none" {{ end }}>
+													{{ if element.Payment().Status == "PAID" }}
+													<span class="text-success">Paid {{ element.Payment().PaymentDateFormatted()}}</span>
+													{{ else if element.Payment().Status == "DECLINED" }}
+													<span class="text-danger">Declined {{ element.Payment().PaymentDateFormatted()}}</span>
+													{{ else if element.Payment().Status == "PROCESSING" }}
+														{{ if element.Payment().PaymentMethod == "PAYPAL"}}
+														{{ if element.Payment().PaypalToken == ""}}
+														<span class="text-danger">It seems like something might have gone wrong during your Paypal payment. Please contact us so we can resolve the issue.</span>
+														{{ else }}
+														<p>It looks like your Paypal payment is incomplete, you might have closed the window before finalising. <a class="text-danger" href="{{.Data.PaypalRedirectURL}}{{element.Payment().PaypalToken}}">Continue and finish paying</a> or <a class="text-danger" href="/cancel-paypal-payment?id={{element.Payment().PaymentID}}">Cancel</a>.</p>
+														<p>If you believe this to be in error, you can <a class="text-danger" href="/refresh-paypal-payment?id={{element.Payment().PaymentID}}">Refresh</a> the status or wait until our verification process updates it automatically. If you continue to have this problem, please contact us so we can resolve your issue.</p>
+														{{ end }}
+														{{ else if element.Payment().PaymentMethod == "CC" }}
+														<span class="text-danger">It seems like something might have gone wrong during your Credit Card payment. Please contact us so we can resolve the issue.</span>
+														{{ end }}
+													{{ end }}
+												</div>
+												
+												<div id="addTipForm" class="add-tip-form-wrapper collapse">
+													<form class="add-tip-form">		
+														<input type="hidden" id="payment-request-id" value="{{ element.Payment().PaymentID}}" />											
+														<div class="form-group">
+															<label for="add-tip" class="form-label-outside text-sbold">Tip</label>
+															<input name="add-tip" type="text"  class="form-control"/>
+														</div>
+														<button type="submit" class="btn btn-xs btn-primary submit">Submit</button> 																	
+													</form>
+												</div>
+												<div id="payRequestDeclineForm{{ element.Payment().PaymentID}}" class="pay-decline-form-wrapper collapse">
+													<form class="pay-decline-form">
+														<input type="hidden" name="id" value="{{ element.Payment().PaymentID}}" />
+														<div class="form-group">
+															<label for="decline-reason" class="form-label-outside text-sbold">Decline Reason</label>
+															<textarea name="decline-reason" style="height: 100px;" class="form-control"></textarea>
+														</div>
+														<button type="submit" class="btn btn-xs btn-primary submit">Submit</button> 
+														<button class="btn btn-xs btn-default cancel" onclick="return false;" data-toggle="collapse" data-target="#payRequestDeclineForm{{ element.Payment().PaymentID}}">Cancel</button>
+														<div role="alert" class="alert alert-danger" style="display: none">
+															<p class="offset-top-0">Error declining payment. Please try again later.</p>
+														</div>
+													</form>
+												</div>
+
+												<div role="alert" class="alert alert-success" style="display: none">
+													<p class="offset-top-0">Payment successful</p>
+												</div>
+												<div role="alert" class="alert alert-danger" style="display: none">
+													<p class="offset-top-0">Error making payment. Please try again later.</p>
+												</div>
+											</div>
+										</div>
+										{{ end }}											
+										
+									</div>
+									<div id="payRequestMessageForm{{element.Payment().PaymentID}}" class="pay-message-form-wrapper collapse">
+										<form class="pay-message-form">		
+											<input type="hidden" id="payment-request-id" value="{{ element.Payment().PaymentID}}" />											
+											<div class="form-group">
+												<label for="pay-request-message" class="form-label-outside text-sbold">Message</label>
+												<textarea name="pay-request-message" style="height: 100px;" class="form-control"></textarea>
+											</div>
+											<button type="submit" class="btn btn-xs btn-primary">Send Message</button> 																	
+										</form>
+									</div>
+									{{ else if element.NotificationType == "PaymentRequestPaid" }}									
+									<div>
+										{{ hours := element.BookingHistory().GetBookingDuration() }}									
+										<strong>{{element.Sender().FullName()}}</strong> made a <strong>Payment</strong> for <strong>Booking</strong> (ID {{element.Booking().BookingID}})
+										{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>
+										
+										Created <time datetime="2016-01-01">{{element.BookingHistory().CreatedTimeFormat()}}</time>	
+									</div>
+									
+									<div class="unit-left">
+										<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+											<li>
+												<span class="box-comment-icon mdi mdi-clock"></span>												
+											</li>
+											<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+											<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>
+										</ul>
+									</div>								
+									{{ else if element.NotificationType == "LeaveFeedback" }}	
+										{{ hours := element.BookingHistory().GetBookingDuration() }}																	
+									<div>
+										Please leave <strong>Feedback</strong> for <strong>{{element.Sender().FullName()}}</strong> (ID {{element.Booking().BookingID}})<br/>																		
+										{{element.Booking().Profile.GetProfileServiceName(element.Booking().Profile.ServiceCategory)}} {{element.BookingHistory().FromDate}} . Start Time {{element.BookingHistory().FromTime}} {{ if hours != 0}} Duration {{ hours }} {{if hours == 1}} hour {{ else }}hours {{end}} {{ end }} Total Cost AU${{element.BookingHistory().Fee}} <br/>
+									</div>
+									<div>								
+										<br/>Created {{element.BookingHistory().CreatedTimeFormat()}}
+									</div>
+									<a href="/feedback/{{ element.Booking().BookingUUID }}" class="btn btn-xs btn-danger" {{if element.CheckLeaveFeedback(element.SenderID) == true || element.CheckReceivedFeedback() == true }} disabled {{ end }}>Leave Feedback</a>
+									
+									{{ else if element.NotificationType == "PaymentRequestDeclined" }}
+									<div>
+										<strong class="text-danger">Booking Payment Request Declined</strong> by <strong>{{ element.Sender().FullName() }}</strong> 										
+									</div>
+									<div class="unit-left">
+										<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+											<li>
+												<span class="box-comment-icon mdi mdi-clock"></span>
+												<time datetime="2016-01-01">{{ element.Payment().ConfirmedDateFormatted()}}</time>
+											</li>
+											<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+											<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>
+										</ul>
+									</div>
+									<a href="/booking-response/{{ element.Payment().Booking.BookingUUID }}/{{ element.Payment().Booking.GetLatestBookingHistory().BookingHistoryUUID }}" class="text-info">Booking</a> payment request denied.
+									<p><strong>Reason:</strong> {{element.Payment().DeclinedReason}}</p>
+									{{ end }}									
+									<input class="notification-id" type="hidden" name="id" value="{{ element.NotificationID }}" />				
+								</div>
+							</div>
+							{{ end }}						
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-offset-1 col-lg-11">
+						<div class="range">
+							{{ range element := .Data.FeedbackList }}							
+								<div class="col-md-12 offset-top-20 notification" style="padding: 20px;border: 1px solid #ddd;border-radius: 5px;height: 100%;">
+									<div class="col-md-2">		
+										<img class="img-circle" src="{{ element.SenderImageURL }}" alt="{{element.SenderImageURL}}" height="80">											
+									</div>
+									<div class="col-md-9">
+										<div>
+											<strong class="text-danger">Rated</strong> by <strong>{{ element.SenderName }}</strong> on <strong>UR</strong> 										
+										</div>
+										<div class="row">
+											<div class="col-md-6">
+												<input class="starscore" name="starscore-1" value="{{ element.FeedbackDetail.Score/20}}" class="rating-loading">
+											</div class="col-md-6">
+											<div>
+												{{ element.FeedbackDetail.Description}}
+											</div>
+										</div>
+										
+										<div class="unit-left">
+											<ul class="box-comment-meta list-inline list-inline-sm text-dark">
+												<li>
+													<span class="box-comment-icon mdi mdi-clock"></span>
+													<time datetime="2016-01-01">{{ element.FeedbackDetail.DateFormatted()}}</time>
+												</li>
+												<li><a href="#like"><span class="box-comment-icon mdi mdi-thumb-up-outline"></span> Like</a></li>
+												<li><a href="#reply"><span class="box-comment-icon mdi mdi-message-outline"></span> Reply</a></li>
+											</ul>
+										</div>	
+										<a href="/view-feedback/{{ element.BookingUUID }}" class="text-info">View Feedback</a>
+									</div>				
+								</div>
+							{{ end }}
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>
+	</div>
+</div>
+<div>
+	<input type="hidden" id="user-id" value="{{.Data.UserID}}" />
+</div>
+
+{{ end }}
+
+{{ block BodyFooterIncludes() }}
+<script>
+	$(document).on('ready', function(){
+    	$('.starscore').rating({displayOnly: true, step: 0.05});
+	});
+	var drpObject = {
+		currentPage: 1,
+		lastPage: parseInt("{{len(.Data.RoomPageNumbers)}}"),
+		displayCount: 3,
+		goToPrev() {
+			if (this.currentPage > 1) {
+				this.currentPage-=1;
+			}
+			this.togglePagination(this.currentPage);
+		},
+		goToNext() {
+			if (this.currentPage<this.lastPage) {
+				this.currentPage+=1;
+			}
+			this.togglePagination(this.currentPage);
+		},
+		setCurrentPage(pageNum) {
+			this.currentPage = pageNum;
+			this.togglePagination(this.currentPage);
+		},
+		getCurrentPage() {
+			return this.currentPage;
+		},
+		initialize() {
+			this.togglePagination(this.currentPage);
+		},
+		togglePrevNext() {
+			if (this.currentPage==1) {
+				$("#dash-rooms-pagination .drp-prev").addClass("disabled");
+			}
+			else {
+				$("#dash-rooms-pagination .drp-prev").removeClass("disabled");
+			}
+			if (this.currentPage>= this.lastPage) {
+				$("#dash-rooms-pagination .drp-next").addClass("disabled");
+			}
+			else {
+				$("#dash-rooms-pagination .drp-next").removeClass("disabled");
+			}
+		},
+		togglePagination(pageNum) {
+			$("#dash-rooms-pagination .drp-item").removeClass("active");
+			$("#dash-rooms-pagination .drp-item:eq(" + (pageNum-1) + ")").addClass("active");
+
+			this.togglePrevNext();
+		},
+		sendAjaxCallPagination(){
+			$.get('/update-message-notification',{
+				currentPage: drpObject.currentPage,
+				displayCount: drpObject.displayCount,
+				userId: $('#user-id').val()
+			})
+			.done(function (d, Status, xhr) {
+				var messages = xhr.responseJSON;
+				var data = messages["data"];
+				$('#message-data').empty();
+				$('#message-data').html(data.DashMessageContent);
+			})
+			.fail(function (xhr, Status, error){
+
+			});
+		},
+		sendAjaxCallDropDown(){
+			$.get('/update-message-notification',{
+				currentPage: drpObject.currentPage,
+				displayCount: drpObject.displayCount,
+				userId: $('#user-id').val()
+			})
+			.done(function (d, Status, xhr) {
+				var messages = xhr.responseJSON;
+				var data = messages["data"];
+				$('#message-data').empty();
+				$('#message-data').html(data.DashMessageContent);
+				$('#dash-rooms-pagination').empty();
+				$('#dash-rooms-pagination').html(data.DashPagination);
+				drpObject.lastPage = data.DashPaginationLength;
+				drpObject.currentPage = 1;
+				drpObject.initialize();
+				drpObject.sendAjaxCallPagination();
+			})
+			.fail(function (xhr, Status, error){
+
+			});
+		},
+	}
+	
+	$(function() {
+		$("#dash-rooms-pagination").on("click", ".drp-prev", function(){
+			drpObject.goToPrev();
+			drpObject.sendAjaxCallPagination();
+		}); 
+			
+
+		$("#dash-rooms-pagination").on("click", ".drp-next", function(){
+			drpObject.goToNext();
+			drpObject.sendAjaxCallPagination();
+		})
+
+		$("#dash-rooms-pagination").on("click", ".drp-item", function(){
+			drpObject.setCurrentPage($(this).index());
+			drpObject.sendAjaxCallPagination();
+		})
+
+		$("#dropdownNum #li-3").click(function(){
+			$("#displayNum").html($(this).text() + "<span class='caret'></span>");
+			$("#dropdownNum li").removeClass("disabled");
+			$("#dropdownNum #li-3").addClass("disabled");
+			drpObject.displayCount = 3;
+			drpObject.sendAjaxCallDropDown();
+		})
+
+		$("#dropdownNum #li-5").click(function(){
+			$("#displayNum").html($(this).text() + "<span class='caret'></span>");
+			$("#dropdownNum li").removeClass("disabled");
+			$("#dropdownNum #li-5").addClass("disabled");
+			drpObject.displayCount = 5;
+			drpObject.sendAjaxCallDropDown();
+		})
+
+		$("#dropdownNum #li-10").click(function(){
+			$("#displayNum").html($(this).text() + "<span class='caret'></span>");
+			$("#dropdownNum li").removeClass("disabled");
+			$("#dropdownNum #li-10").addClass("disabled");
+			drpObject.displayCount = 10;
+			drpObject.sendAjaxCallDropDown();
+		})
+
+		$("#dropdownNum #li-20").click(function(){
+			$("#displayNum").html($(this).text() + "<span class='caret'></span>");
+			$("#dropdownNum li").removeClass("disabled");
+			$("#dropdownNum #li-20").addClass("disabled");
+			drpObject.displayCount = 20;
+			drpObject.sendAjaxCallDropDown();
+		})
+		drpObject.initialize();
+		drpObject.sendAjaxCallDropDown();
+		$("#notification-tab").click(function(){				
+			$.post('/update-unread-notification',{
+				userId: $('#user-id').val()
+			})
+			.done(function (d, Status, xhr) {
+				var messages = xhr.responseJSON;
+				var data = messages["data"];				
+				$(".badge").hide();
+			})
+			.fail(function (xhr, Status, error){
+
+			});
+		});
+	})
+</script>
+{{ end }}

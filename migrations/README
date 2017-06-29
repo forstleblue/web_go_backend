@@ -1,0 +1,54 @@
+See https://github.com/gemnasium/migrate
+
+Creates a table in the database to keep track of version, called 'schema_migrations'.
+The migrations are not currently run automatically, they are run manually from the command line.
+It is just an easier way of keeping track of changes to the database, while still keeping control over when they are run.
+
+EXAMPLE URL
+postgres://postgres@localhost:5432/ur?sslmode=disable
+
+
+FULL UR Project examples for localhost from app folder:
+
+To apply new changes:
+migrate -url postgres://postgres@localhost:5432/ur?sslmode=disable -path ./migrations up
+
+To re-run all changes from start (will truncate tables):
+migrate -url postgres://postgres@localhost:5432/ur?sslmode=disable -path ./migrations reset
+
+
+# install
+go get github.com/gemnasium/migrate
+
+# create new migration file in path
+migrate -url driver://url -path ./migrations create migration_file_xyz
+
+# apply all available migrations
+migrate -url driver://url -path ./migrations up
+
+# roll back all migrations
+migrate -url driver://url -path ./migrations down
+
+# roll back the most recently applied migration, then run it again.
+migrate -url driver://url -path ./migrations redo
+
+# run down and then up command
+migrate -url driver://url -path ./migrations reset
+
+# show the current migration version
+migrate -url driver://url -path ./migrations version
+
+# apply the next n migrations
+migrate -url driver://url -path ./migrations migrate +1
+migrate -url driver://url -path ./migrations migrate +2
+migrate -url driver://url -path ./migrations migrate +n
+
+# roll back the previous n migrations
+migrate -url driver://url -path ./migrations migrate -1
+migrate -url driver://url -path ./migrations migrate -2
+migrate -url driver://url -path ./migrations migrate -n
+
+# go to specific migration
+migrate -url driver://url -path ./migrations goto 1
+migrate -url driver://url -path ./migrations goto 10
+migrate -url driver://url -path ./migrations goto v

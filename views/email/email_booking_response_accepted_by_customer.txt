@@ -1,0 +1,22 @@
+Booking Accepted by Customer
+
+Hi {{ReceiveUser.FullName()}},
+
+{{SendUser.FirstName}} thinks UR awesome! {{SendUser.FirstName}} accepted the booking. Here are the final details:
+
+Customer:{{SendUser.FullName()}}
+Your Profile:{{ProfileServiceName}} 
+Booking ID:{{BookingID}}
+Date:{{Date}}
+Start Time:{{StartTime}}
+Duration: {{Duration}} hours
+Total Cost: AU${{Cost}}
+Comments:{{Comments}}
+
+Now go and show {{SendUser.FirstName}} that UR the best!
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+{{DashboardURL}}
+
+Regards,
+UR Local

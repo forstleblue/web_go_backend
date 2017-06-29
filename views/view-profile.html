@@ -1,0 +1,52 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+	<!-- Modern Breadcrumbs-->
+	<section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+		<div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+		<div data-speed="0" data-type="html" class="rd-parallax-layer">
+			<div class="bg-overlay-gray-darkest">
+				<div class="shell section-top-98 section-lg-top-155">
+					
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+{{ end }} 
+
+{{ block BodyFooterIncludes() }}
+	
+{{ end }}
+
+{{ block Body() }}
+
+<main class="page-content">
+<section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+
+    <div class="range">
+
+        <div class="col-sm-4">
+        	{{profile := .Data.Profile}}
+          	<!-- end -->
+
+          	{{ include "/partials/_profile_card.html"}}
+        </div>
+        <div class="col-sm-4">
+        	<h4>Summary:</h4>
+
+        </div>
+        <div class="col-sm-4">
+        	<h4>Feedback received</h4>
+        	
+        </div>
+
+        <div class="col-sm-12">
+        	<a href="/booking/{{profile.ProfileID}}" class="btn btn-primary pull-right">Booking Request</a>
+        </div>
+
+    </div>
+</section>
+</main>
+{{ end }}

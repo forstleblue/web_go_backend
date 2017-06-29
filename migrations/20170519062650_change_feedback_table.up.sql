@@ -1,0 +1,6 @@
+ALTER TABLE ONLY feedbacks
+    ADD COLUMN positive BOOLEAN;
+ALTER TABLE ONLY feedbacks
+    ADD COLUMN neutral BOOLEAN;
+ALTER TABLE ONLY feedbacks
+    ADD COLUMN negative BOOLEAN;

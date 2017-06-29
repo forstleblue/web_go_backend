@@ -1,0 +1,20 @@
+Booking Request Message
+
+Hi {{ReceiveUser.FirstName}},
+
+{{SendUser.FirstName}} sent you a message about your booking request. Here are the details:    
+
+Customer:{{SendUser.FullName()}}
+Your Profile:{{ProfileServiceName}}
+Booking ID:{{BookingID}}
+Date: {{Date}} {{if IsDateChanged}} changed{{end}}
+Start Time:{{StartTime}} {{if IsStartTimeChanged}} changed{{end}}
+Duration: {{Duration}} hours {{if IsDurationChanged}} changed{{end}}
+Total Cost: AU${{Cost}} {{if IsTotalCostChanged}} changed{{end}}
+Comments:{{Comments}}
+
+Go to your Dashboard by copying and pasting the following link into your browser:
+{{DashboardURL}}
+
+Regards,
+UR Local

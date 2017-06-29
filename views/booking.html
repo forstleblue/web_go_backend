@@ -1,0 +1,198 @@
+{{ extends "layout-home.html" }}
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block"> {{ if .Data.Profile.ProfileType != "s"}}Booking Request {{ else }} Buy Request {{ end }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }} 
+{{ block BodyFooterIncludes() }}
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#loginModal #form-login-hidden').val('booking')
+    
+   {{if .Data.IsSelf || .Data.IsCustomer}}
+      $(":input").attr("disabled", true);
+   {{else}}
+
+      $('.date-picker').datetimepicker({
+        format: 'DD/MM/YYYY'
+      });
+
+      $('.time-picker').datetimepicker({
+        format: 'LT'
+      });
+      $('.starscore').rating({displayOnly: true, 				  
+				showCaption: true,
+			}); 
+      $("#mwd-picker").change(function() {
+        console.log($("#mwd-picker").val());
+      });
+    {{end}}
+      $("#date-picker3").on("dp.change", function(e) {    
+        var time = moment(e.date).add(1, 'hour');    
+        $('#date-picker4').data("DateTimePicker").date(time);
+        $('#date-picker4 .form-label').focus();
+      });
+  });
+
+</script>
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">
+  {{if .Data.IsSelf || .Data.IsCustomer}}
+  <div class="label-custom label-lg-custom label-rounded-custom label-danger" data-toggle="tooltip" title="Seller profile" style="width: 100%;">Profile is not bookable</div>
+  {{end}}
+  <section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">    
+      <div class="range">
+
+        <div class="col-sm-4">
+          <!-- to make sure that profile object is available in _profile_card partial -->
+          {{profile := .Data.Profile}}
+          <!-- end -->
+          {{feedbackAverage := profile.UniversalReputationScore()}}
+          {{ index := 0}}
+          {{ include "/partials/_profile_card.html"}}
+             
+        </div>
+        <div class="col-sm-4">
+          <form id="booking-form" data-form-output="form-output-global" method="post" action=""class="booking-form text-left">
+            <input type="hidden" value="{{.Data.Profile.ProfileID}}" id="profile-id"/>
+            <div class="form-group" class="form-label rd-input-label">              
+              <label for="booking-message" class="form-label">{{ if .Data.Profile.ProfileType != "s"}}Booking Message {{ else }} Buy Message {{ end }}</label>
+              <textarea id="booking-message" class="form-control"  rows="3">{{.Data.inputData["bookingMessage"]}}</textarea>  
+                 
+            </div>            
+            {{ if .Data.Profile.ProfileType =="p"}}
+              {{ if .Data.serviceInputArray[0] == true}}
+              <div class="form-group offset-top-20">
+                
+                <div class="input-group date date-picker" data-provide="datepicker" id="date-picker1">                
+                  <label for="booking-from-date" class="form-label rd-input-label">From Date</label>
+                  <input id="booking-from-date" type="text" {{ if .Data.inputData["fromDate"] }}  value='{{.Data.inputData["fromDate"]}}' {{ end }}  class="form-control" data-constraints='@Required(label="From Date")'>
+                    <div class="input-group-addon">
+                      <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.serviceInputArray[1] == true}}
+              <div class="form-group offset-top-20">
+                <div class="input-group date date-picker" data-provide="datepicker" id="date-picker2">
+                <label for="booking-to-date" class="form-label rd-input-label">To Date</label>
+                <input id="booking-to-date" type="text" {{ if .Data.inputData["toDate"] }} value='{{.Data.inputData["toDate"]}}'  {{end}}  class="form-control" data-constraints='@Required(label="To Date")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.serviceInputArray[2] == true}}
+              <div class="form-group offset-top-20">
+                <div class="input-group date time-picker" data-provide="datepicker" id="date-picker3">    
+                  <label for="booking-from-time" class="form-label rd-input-label">From Time</label>          
+                  <input id="booking-from-time" type="text" {{ if .Data.inputData["fromTime"] }} value='{{.Data.inputData["fromTime"]}}'  {{end}} class="form-control" data-constraints='@Required(label="From Time")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+              {{ if .Data.serviceInputArray[3] == true }}
+              <div class="form-group offset-top-20">
+                <div class="input-group date time-picker" data-provide="datepicker" id="date-picker4">
+                  <label for="booking-to-time" class="form-label rd-input-label">To Time</label>   
+                  <input id="booking-to-time" type="text" {{ if .Data.inputData["toTime"] }} value='{{.Data.inputData["toTime"]}}'  {{end}} class="form-control" data-constraints='@Required(label="To Time")'>
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+
+              {{ if .Data.serviceInputArray[4] == true}}
+              <div class="form-group offset-top-20">              
+                
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <select id="booking-mwd-picker" class="selectpicker">                  
+                        <option value='m'>Month</option>
+                        <option value='w'>Week</option>
+                        <option value='d'>Day</option>
+                      </select>
+                    </div>     
+                    <div class="col-sm-6">
+                      <label for="booking-frequency-value" class="form-label rd-input-label">Value</label>
+                      <input id="booking-frequency-value" type="text"  class="form-control" data-constraints='@Required(label="FrequencyValue")'>
+                    </div>    
+                  </div>                                           
+                        
+              </div>
+              {{ end }}                
+            
+            {{ end }}    
+            <div class="form-group offset-top-20">
+              <label for="booking-address" class="form-label rd-input-label">Address</label>          
+              <input id="booking-address" type="text" {{ if .Data.inputData["address"] }} value='{{.Data.inputData["address"]}}'  {{end}} class="form-control" data-constraints='@Required(label="Address")'>
+            </div>
+
+            {{ if .Data.Profile.ProfileType == "p" }}
+            <div class="form-group offset-top-20">         
+              
+                <label for="booking-fee" class="form-label rd-input-label">Fee (e.g. 25.00)</label>
+                <input id="booking-fee" type="text" value='{{.Data.inputData["fee"]}}'  class="form-control" data-constraints='@Required(label="Fee")'/>
+            </div>
+            {{ end }}
+
+            <div class="form-group offset-top-20">
+              {{ if .Data.serviceInputArray[5] == true}}
+                {{ if .Data.inputData["totalPrice"] }}
+                  <label for="booking-total-price" class="form-label rd-input-label">TotalPrice</label>   
+                  <input id="booking-total-price" type="text" value='{{.Data.inputData["totalPrice"]}}'  class="form-control" data-constraints='@Required(label="TotalPrice")'>
+                {{ else }}
+                  {{ if .Data.Profile.ProfileType == "p" }}
+                    <label for="booking-total-price" class="form-label rd-input-label">Total Fee</label>   
+                    <input id="booking-total-price" type="text"   class="form-control" data-constraints='@Required(label="TotalPrice")'>
+                  {{ else }}
+                    <label for="booking-total-price" class="form-label rd-input-label">Total Price</label>
+                    <input id="booking-total-price" type="text"   class="form-control" data-constraints='@Required(label="TotalPrice")'>   
+                  {{ end }}         
+                
+                {{ end }}
+              {{ end }}
+                            
+            </div>
+            {{if !.Data.IsLoggedIn}}
+              <!-- <a class="btn btn-primary btn-block"  href="javascript:toastr['error']('You should login first in prior to booking.');" >Send</a> -->
+              <button type="button" class="btn btn-primary btn-block offset-top-30" data-toggle="modal" data-target="#loginModal" >Send</button>
+              
+            {{else if .Data.IsSelf}}
+              <a class="btn btn-primary btn-block offset-top-30" href="javascript:toastr['error']('You might not feel very clever!', 'Booking yourself?');">Send</a>
+            {{else if .Data.IsCustomer}}
+              <!--<a class="btn btn-primary btn-block offset-top-30" href="javascript:toastr['error']('This is a customer (buyer) profile and cannot be booked', 'Cannot Book');">Send</a>-->
+            {{else}}
+              <button type="submit" class="btn btn-primary btn-block offset-top-30">Send</button>
+            {{end}}
+          </form>
+        </div>
+        <div class="col-sm-4">
+          
+         <h4>{{ if .Data.Profile.ProfileType != "s"}}Existing Bookings {{ else }} Previous Sales {{ end }}:</h4>
+        </div>
+      </div>    
+      
+  </section>
+</main>
+{{ end }}
+

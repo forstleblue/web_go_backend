@@ -1,0 +1,8 @@
+ALTER TABLE ONLY feedbacks
+    DROP COLUMN IF EXISTS positive;
+
+ALTER TABLE ONLY feedbacks
+    DROP COLUMN IF EXISTS neutral;
+
+ALTER TABLE ONLY feedbacks
+    DROP COLUMN IF EXISTS negative;

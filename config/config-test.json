@@ -1,0 +1,56 @@
+{
+	"LogRequests": true,
+	"Protocol": "http://",
+	"Host": "localhost",
+    "SSLHost": "",
+    "SSLRedirect" : false,
+    "Port": ":3000",
+    "Locales": [["en","English"],["zh","中文"]],
+    "PageCacheDurationMinutes" : 0,
+	"DB": {
+        "Host": "ur.cunleety1fu3.ap-southeast-2.rds.amazonaws.com",
+	    "DatabaseName": "ur",
+        "Username" : "ur",
+        "Password":"pass"
+    },
+    "Security": {
+        "AllowedHosts": ["localhost:3000", "52.62.182.60:3000","ur-local.com.au", "urlocal.com.au"],
+        "STSSeconds":0,
+        "CustomFrameOptions": "DENY",
+        "ContentTypeNosniff" : true,
+        "ContentSecurityPolicy" : "", 
+        "BrowserXSSFilter" : true,
+        "PublicKey" : ""
+    },
+    "PayPalAPI": {
+        "URL": "svcs.sandbox.paypal.com/AdaptivePayments",
+        "RedirectURL": "www.sandbox.paypal.com/cgi-bin/webscr",
+        "Username":  "roland_api1.universalreputations.com",
+        "Password":  "2C6AR2MX73KF2JHL",
+        "Signature": "AFcWxV21C7fd0v3bYYYRCpSSRl31ARxPlwM280Vk31W8tbSS8Evx4aIL",
+        "ClientID": "AZ1RwWxkO9sR7bliCoduNZWhAvQWv4OT30qJlxy20aYfw9Pz3zzJIMUN6d8z5VNFo1jCTTTtQcP1hYKA",
+        "Secret": "EHw6liJcbnGIV0qJis6R_PYsk1wczY2wRktyzNCxYl3VtbAbVQl2YQiWi0exLIjO136RiKb3S_i9WYsM",
+        "AppID": "APP-80W284485P519543T"
+    },
+    "PayPalAuth": {
+        "Key":  "",
+        "Secret":  "",
+        "Name": "paypal"
+    },
+    "FacebookAuth" : {
+    	"Key":    "836373266498291",
+		"Secret": "4ce3c94fa2924a62585341863cecc582",
+		"Name":   "facebook"
+    },
+    "Email" : {
+        "AWSRegion": "us-west-2",
+        "CredentialsSet": "ur-dev",
+        "FromEmail": "noreply@universalreputations.com.au"
+    },
+    "GoogleAPIKey": "AIzaSyBQUXIkRq6GiSpan-BwOtfhVFJXNc55tZY",
+	"PaymentSandbox": true,
+    "PaypalEmail": "roland@universalreputations.com",
+	"AdminEmail":"info@universalreputations.com.au",
+	"SalesEmail":"sales@universalreputations.com.au",
+	"SupportEmail":"support@universalreputations.com.au"
+}

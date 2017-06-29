@@ -1,0 +1,66 @@
+{{ extends "layout-authenticated.html" }} 
+{{block BodyAuth()}}
+<div class="range range-sm-left range-xs-center">
+	{{ if .Data.EbayProfileAdded == false }}
+  	<div class="post-wrapper cell-sm-12 cell-md-4">
+		<a href="/auth/ebay">
+			<article class="post post-modern" style="cursor: pointer;opacity:.5;">
+				<!-- Post media-->
+				<header class="post-media">
+					<div class="text-left" style=" background-image: url(/images/ebay.png); background-size: contain; background-repeat:no-repeat;background-position:0 50%; height: 270px;">
+					</div>
+					<div class="post-tags group-xs">
+					<span class="label-custom label-lg-custom label-rounded-custom label-primary" style="width: 99%;">Add Ebay Profile</span>
+					</div>
+				</header>
+				<!-- Post content-->
+				<section class="post-content text-center" style="padding-top:10px; min-height: 150px;">
+					<i class="fa fa-plus fa-4x" style="line-height:3;"></i>
+				</section>
+			</article>
+		</a>
+  	</div>
+	{{ else }}
+	<div class="post-wrapper cell-sm-12 cell-md-4">
+		
+	    <article  class="post post-modern" style="cursor: pointer;opacity:1;">
+			<a href="/edit-profile/{{ .Data.EbayProfileUUID }}">
+	        <!-- Post media-->
+	        <header class="post-media">
+				
+	            <div class="text-left" style=" background-image: url(/images/ebay.png); background-size: contain; background-repeat:no-repeat;background-position:0 50%; height: 270px;">
+	            </div>
+	            <div class="post-tags group-xs">
+	            <span class="label-custom label-lg-custom label-rounded-custom label-success" style="width: 99%;">Ebay Profile Added</span>
+	            </div>
+	        </header>
+	        <!-- Post content-->
+	        <section class="post-content text-center" style="padding-top:10px; min-height: 150px;">
+	            <i class="fa fa-check fa-4x" style="line-height:3;"></i>
+	        </section>
+			</a>
+	    </article>
+  	</div>
+	{{ end }}
+  	<div class="post-wrapper cell-sm-12 cell-md-4">
+	    <article onclick="javascript:toastr['info']('Add your Toolmates profile', 'Coming soon!');" class="post post-modern" style="cursor: pointer;opacity:.5;">
+	        <!-- Post media-->
+	        <header class="post-media">
+	            <div class="text-left" style=" background-image: url(/images/toolmates.png); background-size: contain; background-repeat:no-repeat;background-position:0 50%; height: 270px;">
+	            </div>
+	            <div class="post-tags group-xs">
+	            <span class="label-custom label-lg-custom label-rounded-custom label-primary" style="width: 99%;">Add Toolmates Profile</span>
+	            </div>
+	        </header>
+	        <!-- Post content-->
+	        <section class="post-content text-center" style="padding-top:10px; min-height: 150px;">
+	            <i class="fa fa-plus fa-4x" style="line-height:3;"></i>
+	        </section>
+	    </article>
+  	</div>
+	
+
+
+</div>
+
+{{end}}

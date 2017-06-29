@@ -1,0 +1,292 @@
+{{ extends "layout-home.html" }}
+{{ block HeaderIncludes() }}
+  
+  
+{{ end }} 
+
+{{ block CustomHeader() }}
+<div class="context-dark">
+  <!-- Modern Breadcrumbs-->
+  <section class="breadcrumb-modern rd-parallax bg-gray-darkest">
+    <div data-speed="0.2" data-type="media" data-url="/images/background-02-1920x870.jpg" class="rd-parallax-layer"></div>
+    <div data-speed="0" data-type="html" class="rd-parallax-layer">
+      <div class="bg-overlay-gray-darkest">
+        <div class="shell section-top-98 section-bottom-34 section-md-bottom-66 section-md-98 section-lg-top-155 section-lg-bottom-66">
+          <div class="text-extra-big text-bold veil reveal-md-block">Feedback to Provider</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{{ end }} 
+{{ block BodyFooterIncludes() }}
+<style>
+  .slider-track {
+    display: none;
+  }
+  #slider-score {
+    height: 300px; 
+    font-size: 150px;
+  }
+  #slider-score .slider-selection{
+    background: transparent;
+  }
+  #slider-score .slider-handle {
+    border-left-color: black;
+    height: 20px;
+    font-size: 30px;
+  }
+  .greenbar {
+    background-color: lightgreen; 
+    height: 10px; 
+    width: 20px;
+    border-style: solid;
+    border-color: white;
+    border-top-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+  .greybar{
+    background-color: lightgrey; 
+    height: 10px; 
+    width: 20px;
+    border-style: solid;
+    border-color: white;
+    border-top-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+  .redbar {
+    background-color: red; 
+    height: 10px; 
+    width: 20px;
+    border-style: solid;
+    border-color: white;
+    border-top-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+</style>
+<script type="text/javascript">  
+  $(document).ready(function(){
+    var SDAstring = [];
+    var score;
+    var commentString;
+    var disableflag = "{{.Data.DisableFlag}}";
+    console.log("Flag: ", disableflag);
+    
+    $('#starscore').rating({displayOnly: true, step: 0.05});
+    $(".btn-group span").hide();
+    $('.starscore').rating({displayOnly: true, 				  
+      showCaption: true,
+    }); 
+    $("#score").slider({
+      min: 10,
+      max: 100,
+      value: 50,
+      orientation: 'vertical',
+      tooltip_position: 'left',
+      reversed: true,
+      formatter: function (value) {
+        return value + '';
+      }
+    });
+    $("#score").on("slide", function (slideEvt) {
+      score = slideEvt.value;
+      $("#starscore").rating("update", score/20);
+      switch (true) {
+        case score>=25 && score<40:
+          commentString=$("#score6").text();
+          break;
+        case score>=40 && score<55:
+          commentString=$("#score5").text();
+          break;
+        case score>=55 && score<70:
+          commentString=$("#score4").text();
+          break;
+        case score>=70 && score<85:
+          commentString=$("#score3").text();
+          break;
+        case score >=85 && score<100:
+          commentString=$("#score2").text();
+          break;
+        case score == 10:
+          commentString=$("#score7").text();
+          break;
+        case score == 100:
+          commentString=$("#score1").text();
+          break;
+      }
+      $("#feedback-comment").val(commentString);
+    });     
+    $(".btn-group").click(function(){             
+      var countOfSelectedButton = $(".btn-group span:visible").length;   
+      if ($(this).find("span").is(":visible") == false & countOfSelectedButton<3){
+          $(this).find("span").show();
+          $(this).addClass("btn-primary");
+          SDAstring.push($(this).text());
+      } else {
+         $(this).find("span").hide();
+         $(this).removeClass("btn-primary");
+         var index = SDAstring.indexOf($(this).text());      
+         if (index==-1) {
+           return;
+         }
+         SDAstring.splice(index,1);
+      }
+      //commentString[1]=SDAstring;
+      //$("#feedback-comment").val(commentString);
+    });
+    $("#submit").click(function () {
+      console.log($("#feedback-description").val(),SDAstring.join(","),score,commentString,"{{.Data.Booking.BookingID}}","{{.Data.FeedbackProfileID}}");
+      $.post('/send-feedback', {
+      descriptionText: $("#feedback-description").val(),
+      SDAtext: SDAstring.join(","),
+      score: score,
+      commentText: $("#feedback-comment").val(),
+      bookingID: parseInt("{{.Data.Booking.BookingID}}"),
+      feedbackProfileID: parseInt("{{.Data.FeedbackProfileID}}")
+    })
+     .done(function (d, status, xhr) {
+        var data = xhr.responseJSON;
+        console.log(status + ":" + data);
+        window.location = data.data;
+     })
+     .fail(function (xhr, status, error){
+
+     });
+    });
+    if (disableflag == "true") {
+      $('.container-fluid').find('*').prop('disabled',true);
+      
+      $("#score").slider("disable");
+    }
+  });
+
+</script>
+
+{{ end }}
+
+{{ block Body() }}
+<main class="page-content {{.PageName()}}">  
+
+  <section class="bg-gray-light" style="padding-top:30px;padding-bottom:30px">
+    <div class="container-fluid">
+      {{if .Data.DisableFlag}}
+      <h3>You have already given your feedback</h3>
+      {{end}}
+      <div class="row">
+        <div class="col-sm-3">
+        
+        {{ index := 0 }}
+        {{ if .Data.UserID == .Data.Booking.User.UserID}}
+           {{profile := .Data.Booking.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ else }}
+           {{profile := .Data.Profile}}
+           {{feedbackAverage := profile.UniversalReputationScore()}}
+           {{ include "/partials/_profile_card.html"}}
+        {{ end }}               
+        </div>
+      
+        <div class="col-sm-4">
+          <div class="offset-top-20">
+            <label for="comment"  style="text-align: left">Description</label>
+            {{ if len(.Data.LastBookingHistory.Address) == 0}}
+              {{ description := "Our transaction on " + .Data.LastBookingHistory.CreatedTimeFormat()  + "\n" + "Thanks. " + .Data.Booking.Profile.User.FirstName + ":)" }}
+              <textarea id="feedback-description" class="form-control" rows="3">{{description}}</textarea>
+            {{ else }}
+              {{ description := "\"" + .Data.FirstBookingHistory.Message + "\"" + "\n"  + "Completed on" + .Data.LastBookingHistory.CreatedTimeFormat() + "\n" + "Thanks. " + .Data.Booking.Profile.User.FirstName + ":)" }}
+              <textarea id="feedback-description" class="form-control" rows="3">{{description}}</textarea>
+            {{ end }}
+            
+          </div>
+          <div class="offset-top-41" >
+            <label  for="score"><h3>Your Score</h3></label>
+            <input id="starscore" name="starscore-1" value="2.5" class="rating-loading">
+          </div>
+          <div class="offset-top-41" style="display: inline-block; position: absolute; left: 15%;">
+            <input id="score" type="text"  data-slider-id="slider-score" data-slider-tooltip="always" data-slider-handle="triangle" />
+          </div>
+          <div class="offset-top-41" style="display: inline-block; position: absolute; left: 25%" >
+            <div class="greenbar"></div>
+            <div class="greenbar"></div>
+            <div class="greenbar"></div>
+            <div class="greenbar"></div>
+            <div class="greenbar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="greybar"></div>
+            <div class="redbar"></div>
+            <div class="redbar"></div>
+            <div class="redbar"></div>
+            <div class="redbar"></div>
+            <div class="redbar"></div>
+          </div>     	
+          <div style="display: inline-block; position: relative; left: 15%">
+            <p id="score1" class="offset-top-30">Exceptional</p>
+            <p id="score2" class="offset-top-26">Excellent</p>
+            <p id="score3" class="offset-top-26">Exceed Expectations</p>
+            <p id="score4" class="offset-top-30"><b>Met Expectations</b></p>
+            <p id="score5" class="offset-top-30">Acceptable</p>
+            <p id="score6" class="offset-top-30">Needed Improvement</p>
+            <p id="score7" class="offset-top-30">Unacceptable</p>
+          </div>
+        </div>
+
+        <div class="col-sm-5 offset-top-20">  
+          <label for="special-degree-awesome" style="font-size: 30px">Special Degree of Awesomeness</label>
+          <p>(Select 3 that best describe your experience)</p>
+            {{sdaList := .Data.SdaProvider.GetSdaList()}}        
+            {{ range element := sdaList[0:5]}}
+              <div class="col-sm-6 offset-top-20">
+                <button type="button" style="width: 110%" class="btn  btn-group" value="{{element}}">{{element}}<span class="glyphicon glyphicon-ok" style="margin-left: 5px;"></span></button>            
+              </div>
+            {{ end }}
+            {{ range element := sdaList[5:]}}
+              <div class="col-sm-6 offset-top-20">
+                <button type="button" style="width: 110%" class="btn  btn-group" value="{{element}}">{{element}}<span class="glyphicon glyphicon-ok"  style="margin-left: 5px;"></span></button>            
+              </div>
+            {{ end }}
+            
+            <div class="offset-top-50">
+              <label for="comments" style="font-size: 30px">Comments</label>
+              <textarea id="feedback-comment" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+      </div>
+      
+      <div class="offset-top-20">
+        <button id="submit" type="button" class="btn btn-primary pull-right" style="width: 30%">Submit</button>
+      </div>     
+    </div>
+   
+  </section>
+  
+</main>
+
+{{ end }}
+
+
+

@@ -1,0 +1,72 @@
+{
+    "LogRequests": true,
+    "Protocol": "http://",
+    "Host": "localhost",
+    "SSLHost": "",
+    "SSLRedirect": false,
+    "Port": ":3000",
+    "Locales": [
+        ["en", "English"],
+        ["zh", "中文"]
+    ],
+    "PageCacheDurationMinutes": 0,
+    "DB": {
+        "Host": "localhost",
+        "DatabaseName": "ur",
+        "Username": "postgres",
+        "Password": "pass",
+        "LoadData": false
+    },
+    "Security": {
+        "AllowedHosts": ["localhost:3000", "52.62.182.60:3000", "ur-local.com.au", "urlocal.com.au"],
+        "STSSeconds": 0,
+        "CustomFrameOptions": "DENY",
+        "ContentTypeNosniff": true,
+        "ContentSecurityPolicy": "",
+        "BrowserXSSFilter": true,
+        "PublicKey": ""
+    },
+    "EbayAPI": {
+        "URL": "https://api.sandbox.ebay.com/ws/api.dll",
+        "RedirectURL": "",
+        "AppID": "Universa-UR-SBX-208fa563f-6cfcc1a6",
+        "DevID": "1ce74dc7-ee75-4fdb-8348-35aa61df69b5",
+        "Secret": "SBX-08fa563f1f33-3127-4bd0-9c53-e07a"
+    },
+    "PayPalAPI": {
+        "URL": "svcs.sandbox.paypal.com/AdaptivePayments",
+        "RedirectURL": "www.sandbox.paypal.com/cgi-bin/webscr",
+        "Username": "roland-facilitator_api1.universalreputations.com",
+        "Password": "FXV4L9ZEBR7E3XPX",
+        "Signature": "AFcWxV21C7fd0v3bYYYRCpSSRl31AjMCMkwwdf-GcJ3Nw4BNeDujjPwV",
+        "ClientID": "AdGzKEur8GFbxxcgiKtJxxtG0X5ny9ejI2DeqdC9vUCgYrqpojCR975Qb8jJDttTMG7HvNiueg_o2rH2",
+        "Secret": "EL6slP9Sxr7nZrU4KU_wxKRX0GKNM-dmBCcKkDbyUq7PXpXc8sgb6br3g9S1loY2bjbQ6sdX3SrKi9_f",
+        "AppID": "APP-80W284485P519543T"
+    },
+    "PayPalAuth": {
+        "Key": "",
+        "Secret": "",
+        "Name": "paypal"
+    },
+    "FacebookAuth": {
+        "Key": "836373266498291",
+        "Secret": "4ce3c94fa2924a62585341863cecc582",
+        "Name": "facebook"
+    },
+    "Email": {
+        "AWSRegion": "us-west-2",
+        "AWSAccessKeyID": "AKIAICROEGF7YVUNQXPQ",
+        "AWSSecretAccessKey":"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",
+        "FromEmail": "notifications@universalreputations.com"
+    },
+    "ReCAPTCHA": {
+        "SiteKey" :"6Lf1MR4UAAAAABx57ZBFAmSWWK0_C6ucF9AtqJKe",
+        "SecretKey" :"6Lf1MR4UAAAAABCHJTHal8owQc0-JGobj1-tXQh2"
+    },
+    "GoogleAPIKey": "AIzaSyBQUXIkRq6GiSpan-BwOtfhVFJXNc55tZY",
+    "PaymentSandbox": true,
+    "PaypalEmail": "roland-facilitator@universalreputations.com",
+    "AdminEmail": "info@universalreputations.com",
+    "SalesEmail": "sales@universalreputations.com",
+    "SupportEmail": "support@universalreputations.com"
+}

@@ -1,0 +1,48 @@
+<div class="ur-reputation-widget-wrapper">
+    <div class="ur-reputation-widget-heading-wrapper">
+        <h1 class="ur-reputation-widget-heading">Reputation Score</h1>
+    </div>
+    <div class="ur-reputation-widget-body-wrapper">
+        <div class="ur-reputation-img">
+            <img src="{{.Data.User.DisplayPhoto()}}" />
+        </div>
+        <div class="ur-reputation-detail">
+            <h2 class="ur-reputation-heading">{{.Data.User.FullName()}}</h2>
+            <div class="ur-reputation-rating-wrapper">
+                {{ score := .Data.Score }}
+                {{ if .Data.Count == 0 }}
+                {{ score = 0 }}
+                {{ end }}
+                <div class="star-rating">
+                    <div class="empty-stars">
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                        <span class="ur-reputation-rating-star-o"></span>
+                    </div>
+                    <div class="filled-stars" style="width:{{score}}%;">
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                        <span class="ur-reputation-rating-star"></span>
+                    </div>
+                </div>
+                <span class="ur-reputation-rating-count">({{.Data.Count}})</span>
+            </div>
+            <div class="ur-reputation-testimonial-wrapper">
+                {{ if .Data.Count == 0 }}
+                    No ratings available
+                {{ else }}
+                    
+                    {{.Data.FeedbackDescription}}
+                {{ end }}
+            </div>
+          
+        </div>
+    </div>
+    <div class="ur-reputation-widget-footer-wrapper">
+        Powered by Universal Reputations <img src="{{.Data.FullURL}}/images/logo.png" />
+    </div>
+</div>

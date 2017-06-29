@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" style="background:#cacaca;min-height:100%">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body class="container">
+    <h2>Booking Cancelled by Customer</h2>
+    <hr>
+    <p>Hi {{ReceiveUser.FirstName}},</p><br/>
+    <p>It appears {{SendUser.FirstName}} had to cancel the booking, we hope UR okay with this- here are the details: <br/>    
+    <strong>Customer:</strong> <a href="{{FindPersonURL}}">{{SendUser.FullName()}}</a><br/> 
+    <strong>Your Profile:</strong>{{ProfileServiceName}}<br/> 
+    <strong>Booking ID:</strong>{{BookingID}} <span style="color: red"> Cancelled</span><br/> 
+    <strong>Date:</strong> {{Date}}<br/> 
+    <strong>Start Time:</strong>{{StartTime}}<br/> 
+    <strong>Duration:</strong> {{Duration}} hours<br/> 
+    <strong>Total Cost:</strong> AU${{Cost}}<br/> 
+    <strong>Comments:</strong>{{Comments}}</p><br/> 
+
+    <p>
+        We understand that concellations at this stage may be inconvenient at the best of times,
+        but we ask your understanding.
+    </p><br/>
+    <p>Looking at the bright side: UR now available to be awesome to others!</p>
+
+    <div style="margin-top: 30px">
+        <strong>Regards,</strong><br/>
+        <strong>UR Local</strong>
+    </div>
+    
+    <hr>
+    <p><img src="{{ImageURL}}"></p>
+</body>
+</html>
